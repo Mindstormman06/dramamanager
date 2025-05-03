@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Analyze Script | QSS Drama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-purple-800 text-white py-6 mb-8 shadow-md">
+    <div class="max-w-3xl mx-auto px-4">
+      <h1 class="text-3xl font-bold">📄 Analyze Script</h1>
+      <a href="../index.php" class="text-sm underline hover:text-purple-300">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4">
+    <form action="../backend/scripts/process_script.php" method="POST" enctype="multipart/form-data"
+          class="bg-white p-6 rounded-lg shadow border border-purple-200 space-y-6">
+
+      <div>
+        <label for="character_list" class="block font-medium mb-1">Character List (comma-separated)</label>
+        <input type="text" name="character_list" id="character_list" required
+               placeholder="e.g. MRS. WILSON, JIMMY, LIZ"
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+      </div>
+
+      <div>
+        <label for="script_pdf" class="block font-medium mb-1">Upload Script PDF</label>
+        <input type="file" name="script_pdf" id="script_pdf" accept="application/pdf" required
+               class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600" />
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit" class="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-600 transition">
+          Analyze Script
+        </button>
+      </div>
+    </form>
+  </main>
+
+</body>
+</html>
