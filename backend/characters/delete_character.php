@@ -8,5 +8,7 @@ if ($id) {
     $stmt->execute([$id]);
 }
 
-header("Location: ../../characters/characters.php");
+// Redirect back to the same show
+$show_id = intval($_GET['show_id'] ?? 0);
+header("Location: ../../characters/characters.php?show_id=$show_id");
 exit;

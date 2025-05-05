@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
+include '../header.php';
 
 $title = '';
 $year = '';
@@ -10,10 +11,11 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $year = trim($_POST['year']);
-    $notes = trim($_POST['notes']);
     $semester = trim($_POST['semester']);
+    $notes = trim($_POST['notes']);
+    $errors = [];
 
-    // Basic validation
+    // Validate required fields
     if (empty($title)) {
         $errors[] = 'Title is required.';
     }
@@ -21,9 +23,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Year must be a number.';
     }
 
+    // Handle script upload
+    $script_path = null;
+    if (!empty($_FILES['script']['tmp_name']) && is_uploaded_file($_FILES['script']['tmp_name'])) {
+        $uploadDir = __DIR__ . '/../uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($_FILES['script']['name'], PATHINFO_EXTENSION));
+        if ($ext !== 'pdf') {
+            $errors[] = 'Only PDF files are allowed for the script.';
+        } else {
+            $filename = uniqid('script_', true) . '.' . $ext;
+            $targetPath = $uploadDir . $filename;
+
+            if (move_uploaded_file($_FILES['script']['tmp_name'], $targetPath)) {
+                $script_path = '../uploads/' . $filename;
+            } else {
+                $errors[] = 'Failed to upload the script.';
+            }
+        }
+    }
+
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO shows (title, year, semester, notes) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$title, $year ?: null, $semester ?: null, $notes]);  
+        $stmt = $pdo->prepare("INSERT INTO shows (title, year, semester, notes, script_path) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$title, $year ?: null, $semester ?: null, $notes, $script_path]);
         header("Location: shows.php");
         exit;
     }
@@ -37,16 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-  <header class="bg-purple-800 text-white py-6 mb-8 shadow-md">
-    <div class="max-w-4xl mx-auto px-4">
-      <h1 class="text-3xl font-bold">➕ Add Show</h1>
-      <a href="shows.php" class="text-sm underline hover:text-purple-300">← Back to Shows</a>
-    </div>
-  </header>
-
-  <main class="max-w-4xl mx-auto px-4">
+<body class="bg-gray-100 text-gray-800">
+  <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <?php if ($errors): ?>
       <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded mb-6">
         <ul class="list-disc list-inside">
@@ -57,7 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     <?php endif; ?>
 
-    <form method="POST" class="bg-white p-6 rounded-lg shadow border border-purple-200 space-y-4">
+    <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow border border-purple-200 space-y-4">
+      <h2 class="text-2xl font-semibold mb-6">Add New Show</h2>
+      <a href="shows.php" class="text-blue-600 hover:underline mb-4">← Back to Show List</a>
       <div>
         <label class="block font-medium mb-1" for="title">Show Title *</label>
         <input type="text" name="title" id="title" value="<?= htmlspecialchars($title) ?>" required
@@ -85,6 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"><?= htmlspecialchars($notes) ?></textarea>
       </div>
 
+      <div>
+        <label class="block font-medium mb-1" for="script">Upload Script (PDF)</label>
+        <input type="file" name="script" id="script" accept="application/pdf"
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+      </div>
+
       <div class="flex justify-end">
         <button type="submit" class="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-600 transition">
           Save Show
@@ -92,6 +117,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </form>
   </main>
-
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
+include '../header.php';
 
 // Get selected show_id
 $show_id = $_GET['show_id'] ?? null;
@@ -87,59 +88,34 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Characters | QSS Drama</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-  <header class="bg-purple-800 text-white py-6 mb-8 shadow-md">
-    <div class="max-w-6xl mx-auto px-4">
-      <h1 class="text-3xl font-bold">👤 Characters</h1>
-      <a href="../index.php" class="text-sm underline hover:text-purple-300">← Back to Home</a>
+<body class="bg-gray-100 text-gray-800">
+  <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-purple-800">Characters</h1>
+      <a href="add_character.php?show_id=<?= $show_id ?>" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-600 transition">
+        + Add Character
+      </a>
     </div>
-  </header>
 
-  <main class="max-w-6xl mx-auto px-4">
     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-      <!-- Left: Sorting form -->
-      <form method="GET" class="flex flex-wrap items-center gap-2">
-        <input type="hidden" name="show_id" value="<?= $show_id ?>" />
-
+      <form method="GET" class="flex items-center gap-2">
+        <input type="hidden" name="show_id" value="<?= $show_id ?>">
         <label for="sort" class="text-sm font-medium text-gray-700">Sort by:</label>
-        <select name="sort" id="sort"
-                class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        <select name="sort" id="sort" class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-purple-600">
           <option value="alpha" <?= $sort === 'alpha' ? 'selected' : '' ?>>A–Z</option>
           <option value="lines" <?= $sort === 'lines' ? 'selected' : '' ?>>Line Count</option>
           <option value="mentions" <?= $sort === 'mentions' ? 'selected' : '' ?>>Mention Count</option>
         </select>
-
-        <label for="direction" class="text-sm font-medium text-gray-700">Order:</label>
-        <select name="direction" id="direction"
-                class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-purple-600">
-          <option value="asc" <?= strtolower($direction) === 'asc' ? 'selected' : '' ?>>Ascending</option>
-          <option value="desc" <?= strtolower($direction) === 'desc' ? 'selected' : '' ?>>Descending</option>
-        </select>
-
-        <button type="submit"
-                class="bg-purple-700 text-white px-4 py-1 rounded hover:bg-purple-600 transition">
+        <button type="submit" class="bg-purple-700 text-white px-4 py-1 rounded hover:bg-purple-600 transition">
           Apply
         </button>
       </form>
-
-      <!-- Right: Show title and Add Character -->
-      <div class="flex items-center gap-4">
-        <h2 class="text-xl font-semibold whitespace-nowrap">
-          Characters for: <?= htmlspecialchars($characters[0]['show_title'] ?? 'Selected Show') ?>
-        </h2>
-        <a href="add_character.php?show_id=<?= $show_id ?>"
-          class="bg-purple-700 text-white px-4 py-1 rounded hover:bg-purple-600 transition whitespace-nowrap">
-          + Add Character
-        </a>
-      </div>
     </div>
-
 
     <?php if (count($characters) === 0): ?>
       <p class="text-gray-600">No characters found. Click "Add Character" to start.</p>
@@ -156,15 +132,14 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
               Lines: <span class="font-semibold"><?= $char['line_count'] ?? 0 ?></span>
             </div>
             <div class="flex gap-4 mt-2 text-sm">
-                <a href="edit_character.php?id=<?= $char['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-                <a href="../backend/characters/delete_character.php?id=<?= $char['id'] ?>" class="text-red-600 hover:underline"
-                   onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
+              <a href="edit_character.php?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-blue-600 hover:underline">Edit</a>
+              <a href="../backend/characters/delete_character.php?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-red-600 hover:underline"
+                 onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
             </div>
           </div>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
   </main>
-
 </body>
 </html>

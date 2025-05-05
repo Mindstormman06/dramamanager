@@ -4,33 +4,51 @@ require_once __DIR__ . '/../db.php';
 $id = $_GET['id'] ?? null;
 
 if ($id) {
-    // Check for linked characters or lines
-    $charCount = $pdo->prepare("SELECT COUNT(*) FROM characters WHERE show_id = ?");
-    $charCount->execute([$id]);
-    $hasCharacters = $charCount->fetchColumn() > 0;
+    try {
+        $pdo->beginTransaction();
 
-    $lineCount = $pdo->prepare("SELECT COUNT(*) FROM showlines WHERE show_id = ?");
-    $lineCount->execute([$id]);
-    $hasLines = $lineCount->fetchColumn() > 0;
+        // Fetch the script path for the show
+        $scriptStmt = $pdo->prepare("SELECT script_path FROM shows WHERE id = ?");
+        $scriptStmt->execute([$id]);
+        $show = $scriptStmt->fetch(PDO::FETCH_ASSOC);
 
-    $costumeCount = $pdo->prepare("SELECT COUNT(*) FROM showcostumes WHERE show_id = ?");
-    $costumeCount->execute([$id]);
-    $hasCostumes = $costumeCount->fetchColumn() > 0;
+        // Delete the script file if it exists (BROKEN)
+        // if (!empty($show['script_path'])) {
+        //     $scriptFullPath = __DIR__ . '/../../' . ltrim($show['script_path'], '/');
+        //     if (file_exists($scriptFullPath)) {
+        //         unlink($scriptFullPath);
+        //     }
+        // }
 
-    $propCount = $pdo->prepare("SELECT COUNT(*) FROM showprops WHERE show_id = ?");
-    $propCount->execute([$id]);
-    $hasProps = $propCount->fetchColumn() > 0;
+        // Delete all characters linked to the show
+        $charStmt = $pdo->prepare("DELETE FROM characters WHERE show_id = ?");
+        $charStmt->execute([$id]);
 
+        // Delete all lines linked to the show
+        $lineStmt = $pdo->prepare("DELETE FROM showlines WHERE show_id = ?");
+        $lineStmt->execute([$id]);
 
-    if ($hasCharacters || $hasLines || $hasCostumes || $hasProps) {
-        // Redirect with error
-        header("Location: shows.php?error=linked");
+        // Delete links between the show and costumes
+        $costumeLinkStmt = $pdo->prepare("DELETE FROM showcostumes WHERE show_id = ?");
+        $costumeLinkStmt->execute([$id]);
+
+        // Delete links between the show and props
+        $propLinkStmt = $pdo->prepare("DELETE FROM showprops WHERE show_id = ?");
+        $propLinkStmt->execute([$id]);
+
+        // Delete the show itself
+        $showStmt = $pdo->prepare("DELETE FROM shows WHERE id = ?");
+        $showStmt->execute([$id]);
+
+        $pdo->commit();
+
+        header("Location: ../../shows/shows.php?success=deleted");
+        exit;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        header("Location: ../../shows/shows.php?error=linked");
         exit;
     }
-
-    // If no dependencies, delete
-    $stmt = $pdo->prepare("DELETE FROM shows WHERE id = ?");
-    $stmt->execute([$id]);
 }
 
 header("Location: ../../shows/shows.php");
