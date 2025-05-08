@@ -1,6 +1,3 @@
-Collecting workspace informationHere’s a suggested README.md for your project:
-
-```markdown
 # QSS Drama Manager 🎭
 
 The QSS Drama Manager is a web-based application designed to streamline the management of drama productions. It provides tools for organizing shows, characters, props, costumes, scripts, and more, making it easier for teachers, students, and administrators to collaborate effectively.
@@ -142,6 +139,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 - Built with ❤️ by the QSS Drama Team.
 - Special thanks to all contributors and testers who made this project possible.
-```
-
-Let me know if you'd like to customize any section further!
