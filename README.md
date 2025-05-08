@@ -47,11 +47,13 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ```
 ├── backend/
 │   ├── db.php                # Database connection
+│   ├── album/                # Backend logic for photo album
 │   ├── scripts/              # Python and PHP scripts for script analysis
 │   ├── props/                # Backend logic for props
 │   ├── shows/                # Backend logic for shows
 │   ├── users/                # Backend logic for user management
 │   └── script_conversion/    # Python utilities for script formatting
+├── album/                    # Photo album page
 ├── characters/               # Character management pages
 ├── costumes/                 # Costume management pages
 ├── ideas/                    # Ideas planner pages
@@ -63,6 +65,8 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ├── index.php                 # Main dashboard
 ├── header.php                # Header template
 ├── footer.php                # Footer template
+├── changelog.php             # Changelog Page
+├── mascot.php                # Shows the page mascot
 └── README.md                 # Project documentation
 ```
 
