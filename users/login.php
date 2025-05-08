@@ -83,6 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="teacher_signup.php" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded">Teacher Signup</a>
         </div>
     </div>
+
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-600">Forgot your password?</p>
+      <a href="reset_password.php" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded mt-2 inline-block">
+        Reset Password
+      </a>
+    </div>
   </main>
 </body>
 </html>

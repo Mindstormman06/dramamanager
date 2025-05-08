@@ -17,6 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate form inputs
     if (empty($firstName) || empty($lastName) || empty($password) || empty($confirmPassword) || empty($teacherCode)) {
         $error = 'All fields are required.';
+    } elseif (!preg_match('/^[a-zA-Z]{2,}$/', $firstName)) {
+        $error = 'First name must contain only letters and be at least 2 characters long.';
+    } elseif (!preg_match('/^[a-zA-Z]{2,}$/', $lastName)) {
+        $error = 'Last name must contain only letters and be at least 2 characters long.';
+    } elseif (strlen($password) < 8) {
+        $error = 'Password must be at least 8 characters long.';
+    } elseif (!preg_match('/[A-Z]/', $password)) {
+        $error = 'Password must contain at least one uppercase letter.';
+    } elseif (!preg_match('/[a-z]/', $password)) {
+        $error = 'Password must contain at least one lowercase letter.';
+    } elseif (!preg_match('/[0-9]/', $password)) {
+        $error = 'Password must contain at least one number.';
     } elseif ($password !== $confirmPassword) {
         $error = 'Passwords do not match.';
     } else {
