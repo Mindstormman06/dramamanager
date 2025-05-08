@@ -42,7 +42,11 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
         🎭 QSS Drama Program
       </a>
 
-      <div class="relative">
+      <div class="relative flex items-center gap-4">
+        <a href="/dramamanager/changelog.php" class="text-sm font-semibold hover:text-purple-300 transition">
+          📝 Changelog
+        </a>
+
         <?php if (isset($_SESSION['user_id'])): ?>
           <!-- Username Button -->
           <button onclick="toggleDropdown()" class="text-sm font-semibold focus:outline-none hover:text-purple-300 transition">
