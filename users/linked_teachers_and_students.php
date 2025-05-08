@@ -104,7 +104,7 @@ $linkedStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <td class="border border-gray-300 px-4 py-2"><?= htmlspecialchars($student['first_name']) ?></td>
                   <td class="border border-gray-300 px-4 py-2"><?= htmlspecialchars($student['last_name']) ?></td>
                   <td class="border border-gray-300 px-4 py-2">
-                    <form method="POST" action="../backend/users/reset_password_request.php" class="inline">
+                    <form method="POST" action="../backend/users/reset_password_request.php" class="inline" onsubmit="return confirmResetPassword();">
                       <input type="hidden" name="username" value="<?= htmlspecialchars($student['username']) ?>">
                       <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">
                         Reset Password
@@ -119,6 +119,13 @@ $linkedStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <p class="text-gray-600">No students are linked to you.</p>
         <?php endif; ?>
       </div>
+
+      <script>
+        function confirmResetPassword() {
+          alert("The student has been allowed to reset their password. Please ask them to click 'Reset Password' on the login page.");
+          return true; // Allow the form to submit
+        }
+      </script>
     </div>
   </main>
 

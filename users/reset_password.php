@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1 class="text-2xl font-bold mb-4">🎭 Reset Password</h1>
 
     <?php if ($error): ?>
-      <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
+      <p class="text-red-600 mb-4"><?php echo $error ?></p>
     <?php endif; ?>
 
     <form method="POST" class="space-y-4">
@@ -56,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Check Reset Eligibility</button>
     </form>
+    <div class="mt-4">
+      <a href="login.php" class="text-blue-600 hover:underline">Back to Login</a>
+    </div>
   </main>
 </body>
 </html>
