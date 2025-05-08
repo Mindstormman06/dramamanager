@@ -133,13 +133,4 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-<<<<<<< HEAD
 ---
-=======
----
-
-## Acknowledgments
-
-- Built with ❤️ by the QSS Drama Team.
-- Special thanks to all contributors and testers who made this project possible.
->>>>>>> 1e984fb1b42badfd13294b1929df74252ee43d11
