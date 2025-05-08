@@ -8,5 +8,6 @@
     </p>
   </div>
 </footer>
+<?php include __DIR__ . '/mascot.php'; ?>
 </body>
 </html>
