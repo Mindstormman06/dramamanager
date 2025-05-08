@@ -4,7 +4,7 @@
       © 2025 Drama Manager. All rights reserved.
     </p>
     <p class="text-sm mt-2">
-      Built with ❤️ by the QSS Drama Team.
+      Built with ❤️ by Aiden for the QSS Drama Team.
     </p>
   </div>
 </footer>
