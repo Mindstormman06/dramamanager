@@ -94,15 +94,24 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <article class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700"><?= htmlspecialchars($post['title']) ?></h2>
             <p class="text-sm text-gray-500 mb-2">Posted on <?= date('F j, Y', strtotime($post['created_at'])) ?></p>
-            <div class="prose">
+            <article class="prose">
               <?= $parsedown->text($post['content']) ?>
-            </div>
+            </article>
 
             <?php if ($isAdmin): ?>
               <!-- Edit and Delete Buttons -->
               <div class="mt-4 flex gap-4">
                 <!-- Edit Button -->
-                <button type="button" onclick="openEditModal(<?= $post['id'] ?>, '<?= htmlspecialchars($post['title']) ?>', '<?= htmlspecialchars($post['content']) ?>')" class="bg-yellow-500 hover:bg-yellow-400 text-white px-4 py-2 rounded">Edit</button>
+                <button
+                  type="button"
+                  class="bg-yellow-500 hover:bg-yellow-400 text-white px-4 py-2 rounded"
+                  data-id="<?= $post['id'] ?>"
+                  data-title="<?= htmlspecialchars($post['title'], ENT_QUOTES) ?>"
+                  data-content="<?= htmlspecialchars($post['content'], ENT_QUOTES) ?>"
+                  onclick="openEditModalFromButton(this)"
+                >
+                  Edit
+                </button>
 
                 <!-- Delete Button -->
                 <form method="POST" class="inline">
@@ -151,7 +160,11 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 
   <script>
-    function openEditModal(id, title, content) {
+    function openEditModalFromButton(button) {
+      const id = button.getAttribute('data-id');
+      const title = button.getAttribute('data-title');
+      const content = button.getAttribute('data-content');
+
       document.getElementById('edit-id').value = id;
       document.getElementById('edit-title').value = title;
       document.getElementById('edit-content').value = content;
@@ -162,5 +175,6 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
       document.getElementById('edit-modal').classList.add('hidden');
     }
   </script>
+
 </body>
 </html>

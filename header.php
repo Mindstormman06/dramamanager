@@ -26,7 +26,13 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QSS Drama Program</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      plugins: [tailwindcssTypography],
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
   <script>
     function toggleDropdown() {
       const dropdown = document.getElementById('user-dropdown');
