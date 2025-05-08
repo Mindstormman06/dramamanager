@@ -52,6 +52,11 @@ include 'header.php';
     </a>
     <?php endif; ?>
 
+    <a href="album/album.php" class="bg-white rounded-xl shadow hover:shadow-lg p-6 border border-gray-200 hover:bg-purple-50 transition">
+      <h2 class="text-xl font-semibold text-purple-800 mb-2">📸 Photo Album</h2>
+      <p class="text-gray-600">View photos from shows and rehearsals.</p>
+    </a>
+
   </div>
 </main>
 
