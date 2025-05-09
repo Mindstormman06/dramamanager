@@ -19,8 +19,9 @@ include '../header.php';
       <div>
         <label for="character_list" class="block font-medium mb-1">Character List (comma-separated)</label>
         <input type="text" name="character_list" id="character_list"
-              placeholder="Leave blank to auto-detect (Can edit later)"
-              class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+              placeholder="eg. Antony, Brutus, Cassius"
+              class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              required /> <!-- Added required attribute until auto-detect fixed! -->
       </div>
 
       <div>

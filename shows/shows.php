@@ -67,11 +67,12 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <a href="edit_show.php?id=<?= $show['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
               <a href="../backend/shows/delete_show.php?id=<?= $show['id'] ?>" class="text-red-600 hover:underline"
                 onclick="return confirm('Are you sure you want to delete this show?');">Delete</a>
-              <a href="../backend/scripts/scan_script.php?show_id=<?= $show['id'] ?>" 
+              <!-- <a href="../backend/scripts/scan_script.php?show_id=<?= $show['id'] ?>" 
                  class="text-green-600 hover:underline"
                  onclick="return confirm('Are you sure you want to scan the script? This only functions on SPECIFICALLY FORMATTED SCRIPTS');">
                  Scan
-              </a>
+              </a> -->
+              <!-- Disabled scan button until auto-detect fixed! -->
             </div>
           </div>
         <?php endforeach; ?>
