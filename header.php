@@ -69,24 +69,25 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
 
         <?php if (isset($_SESSION['user_id'])): ?>
           <!-- Username Dropdown -->
-          <button id="dropdown-trigger" onclick="toggleDropdown()" class="text-sm font-semibold focus:outline-none hover:text-[#FFD166] transition-colors">
-            👤 <?= htmlspecialchars($_SESSION['username']) ?>
-          </button>
-
-          <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded shadow-lg hidden z-50 border border-gray-200">
-            <ul class="py-2 text-sm">
-              <?php if ($_SESSION['role'] === 'teacher'): ?>
+          <div class="relative">
+            <button id="dropdown-trigger" onclick="toggleDropdown()" class="text-sm font-semibold focus:outline-none hover:text-[#FFD166] transition-colors">
+              👤 <?= htmlspecialchars($_SESSION['username']) ?>
+            </button>
+            <div id="user-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-white text-gray-800 rounded shadow-lg hidden z-50 border border-gray-200">
+              <ul class="py-2 text-sm">
+                <?php if ($_SESSION['role'] === 'teacher'): ?>
+                  <li>
+                    <a href="/dramamanager/users/link_teachers.php" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
+                  </li>
+                  <li>
+                    <a href="/dramamanager/users/linked_teachers_and_students.php" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
+                  </li>
+                <?php endif; ?>
                 <li>
-                  <a href="/dramamanager/users/link_teachers.php" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
+                  <a href="/dramamanager/backend/users/logout.php" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Logout</a>
                 </li>
-                <li>
-                  <a href="/dramamanager/users/linked_teachers_and_students.php" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
-                </li>
-              <?php endif; ?>
-              <li>
-                <a href="/dramamanager/backend/users/logout.php" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Logout</a>
-              </li>
-            </ul>
+              </ul>
+            </div>
           </div>
         <?php else: ?>
           <!-- Login Button -->

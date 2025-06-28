@@ -55,16 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Link Teachers | QSS Drama</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<?php include '../header.php'; ?>
 <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
-  <?php include '../header.php'; ?>
+  
 
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">

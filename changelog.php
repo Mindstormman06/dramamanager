@@ -51,16 +51,9 @@ $stmt = $pdo->query("SELECT * FROM changelog ORDER BY created_at DESC");
 $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Changelog | QSS Drama Program</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<?php include 'header.php'; ?>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
-  <?php include 'header.php'; ?>
+  
 
   <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-10">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">

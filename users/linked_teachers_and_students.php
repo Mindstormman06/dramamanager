@@ -42,18 +42,9 @@ $stmt->execute([$leadTeacherId]);
 $linkedStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Linked Teachers and Students | QSS Drama</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
-  <?php include '../header.php'; ?>
+<?php include '../header.php'; ?>
 
-  <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
+<main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
       <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">🎭 Linked Teachers and Students</h1>
 
