@@ -8,7 +8,7 @@ include 'header.php';
 ?>
 
 <main class="flex-1 w-full max-w-6xl px-4 py-12 mx-auto">
-  <h1 class="text-4xl font-bold text-[#7B1E3B] mb-10 text-center">Welcome to the QSS Drama Program Portal</h1>
+  <h1 class="text-4xl font-bold text-[#7B1E3B] mb-10 text-center">Welcome to the QSS Drama Portal</h1>
 
   <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
     

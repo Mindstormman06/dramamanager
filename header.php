@@ -22,15 +22,17 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>QSS Drama Portal</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QSS Drama Program</title>
-
+  <link rel="shortcut icon" href="favicon.ico?v=<?php echo md5_file('favicon.ico') ?>" />
+  <link rel="manifest" href="/dramamanager/site.webmanifest">
   <link rel="stylesheet" href="/dramamanager/styles.css">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
 
+  <!-- User Dropdown -->
   <script>
     // Toggle dropdown menu visibility
     function toggleDropdown() {
