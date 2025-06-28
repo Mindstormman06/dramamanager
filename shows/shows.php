@@ -39,8 +39,8 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold text-purple-800">Production List</h2>
-      <a href="add_show.php" class="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded transition">+ Add Show</a>
+      <h2 class="text-2xl font-semibold text-[#7B1E3B]">Production List</h2>
+      <a href="add_show.php" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded transition">+ Add Show</a>
     </div>
 
     <?php if (count($shows) === 0): ?>
@@ -48,7 +48,7 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
       <div class="grid gap-4">
         <?php foreach ($shows as $show): ?>
-          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-purple-600">
+          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-[#7B1E3B]">
             <h3 class="text-xl font-bold"><?= htmlspecialchars($show['title']) ?></h3>
             <?php if (!empty($show['year'])): ?>
               <p class="text-sm text-gray-500">Year: <?= htmlspecialchars($show['year']) ?><?= $show['semester'] ? ' – Semester ' . htmlspecialchars($show['semester']) : '' ?></p>
@@ -79,5 +79,6 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     <?php endif; ?>
   </main>
+  <?php include '../footer.php'; ?>
 </body>
 </html>

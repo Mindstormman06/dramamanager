@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-      <h1 class="text-2xl font-bold text-purple-800 mb-4">🎭 Link Teachers</h1>
+      <h1 class="text-2xl font-bold text-[#7B1E3B] mb-4">🎭 Link Teachers</h1>
 
       <?php if ($error): ?>
         <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label class="block font-semibold text-gray-700">Assistant Teacher Username</label>
           <input type="text" name="linked_teacher_username" class="w-full border-gray-300 rounded p-2 focus:ring focus:ring-purple-200" required>
         </div>
-        <button type="submit" class="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded shadow">
+        <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded shadow">
           Link Teacher
         </button>
       </form>

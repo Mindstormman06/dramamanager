@@ -74,24 +74,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     <?php endif; ?>
 
-    <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow border border-purple-200 space-y-4">
+    <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow border space-y-4">
       <h2 class="text-2xl font-semibold mb-6">Add New Show</h2>
       <a href="shows.php" class="text-blue-600 hover:underline mb-4">← Back to Show List</a>
       <div>
         <label class="block font-medium mb-1" for="title">Show Title *</label>
         <input type="text" name="title" id="title" value="<?= htmlspecialchars($title) ?>" required
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="year">Year (optional)</label>
         <input type="number" name="year" id="year" value="<?= htmlspecialchars($year) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="semester">Semester</label>
-        <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
           <option value="" <?= $semester === '' ? 'selected' : '' ?>>Select Semester</option>
           <option value="1" <?= $semester === '1' ? 'selected' : '' ?>>1</option>
           <option value="2" <?= $semester === '2' ? 'selected' : '' ?>>2</option>
@@ -101,21 +101,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1" for="notes">Notes (optional)</label>
         <textarea name="notes" id="notes" rows="4"
-                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"><?= htmlspecialchars($notes) ?></textarea>
+                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]"><?= htmlspecialchars($notes) ?></textarea>
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="script">Upload Script (PDF)</label>
         <input type="file" name="script" id="script" accept="application/pdf"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-600 transition">
+        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
           Save Show
         </button>
       </div>
     </form>
   </main>
+  <?php include '../footer.php'; ?>
 </body>
 </html>

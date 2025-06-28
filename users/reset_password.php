@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" class="space-y-4">
       <div>
         <label class="block font-semibold">Username</label>
-        <input type="text" name="username" class="w-full border-gray-300 rounded p-2" required>
+        <input type="text" name="username" class="w-full border border-gray-300 rounded p-2" required>
       </div>
       <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Check Reset Eligibility</button>
     </form>

@@ -15,6 +15,13 @@ $sortColumn = match ($sort) {
     default => 'props.name',
 };
 
+// Helper for sort links (to match costumes.php)
+function sortLink($label, $key, $currentSort) {
+    $base = 'text-blue-600 hover:underline';
+    $active = $key === $currentSort ? 'font-bold underline text-[#7B1E3B]' : $base;
+    return "<a href=\"?sort=$key\" class=\"$active\">$label</a>";
+}
+
 // Fetch all props with category and show associations
 $stmt = $pdo->prepare("
     SELECT 
@@ -42,28 +49,30 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-blue-800">Props</h1>
-      <a href="add_prop.php" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded transition">
+      <h1 class="text-3xl font-bold text-[#7B1E3B]">Props</h1>
+      <a href="add_prop.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
         + Add Prop
       </a>
     </div>
 
-    <div class="mb-4">
-      <span class="text-gray-600">Sort by:</span>
-      <a href="?sort=name" class="text-blue-600 hover:underline">Name</a> |
-      <a href="?sort=condition" class="text-blue-600 hover:underline">Condition</a> |
-      <a href="?sort=category" class="text-blue-600 hover:underline">Category</a> |
-      <a href="?sort=show" class="text-blue-600 hover:underline">Show</a>
+    <div class="mb-4 text-sm">
+      <span class="text-gray-700 font-medium">Sort by:</span>
+      <?= sortLink("Name", "name", $sort) ?> |
+      <?= sortLink("Condition", "condition", $sort) ?> |
+      <?= sortLink("Category", "category", $sort) ?> |
+      <?= sortLink("Show", "show", $sort) ?>
     </div>
 
     <?php if (count($props) === 0): ?>
-      <p class="text-gray-600">No props found. Click "Add Prop" to start.</p>
+      <div class="text-center py-10 text-gray-500 italic">
+        No props found. Click <strong class="text-[#7B1E3B]">“Add Prop”</strong> to get started!
+      </div>
     <?php else: ?>
-      <div class="grid gap-4">
+      <div class="grid gap-4 md:grid-cols-2">
         <?php foreach ($props as $p): ?>
-          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-blue-600 flex gap-4">
+          <div class="bg-white rounded-xl p-5 shadow-md border-l-4 border-[#7B1E3B] flex gap-4 hover:shadow-lg transition">
             <?php if (!empty($p['photo_url'])): ?>
-              <img src="../<?= htmlspecialchars($p['photo_url']) ?>" alt="Photo of <?= htmlspecialchars($p['name']) ?>" class="w-24 h-24 object-cover rounded">
+              <img src="../<?= htmlspecialchars($p['photo_url']) ?>" alt="Photo of <?= htmlspecialchars($p['name']) ?>" class="w-24 h-24 object-cover rounded-lg">
             <?php else: ?>
               <div class="w-24 h-24 flex items-center justify-center bg-gray-200 text-gray-400 rounded">No Photo</div>
             <?php endif; ?>
@@ -71,16 +80,16 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="flex-1">
               <h3 class="text-xl font-bold"><?= htmlspecialchars($p['name']) ?></h3>
               <?php if (isset($p['category_name'])): ?>
-                <p class="text-gray-600 text-sm">Category: <?= htmlspecialchars($p['category_name']) ?></p>
+                <p class="text-gray-700 text-sm leading-relaxed">Category: <?= htmlspecialchars($p['category_name']) ?></p>
               <?php endif; ?>
               <?php if (isset($p['description'])): ?>
-                <p class="text-gray-600 text-sm">Description: <?= htmlspecialchars($p['description']) ?></p>
+                <p class="text-gray-700 text-sm leading-relaxed">Description: <?= htmlspecialchars($p['description']) ?></p>
               <?php endif; ?>
               <?php if (isset($p['itemcondition'])): ?>
-                <p class="text-gray-600 text-sm">Condition: <?= htmlspecialchars($p['itemcondition']) ?></p>
+                <p class="text-gray-700 text-sm leading-relaxed">Condition: <?= htmlspecialchars($p['itemcondition']) ?></p>
               <?php endif; ?>
               <?php if (isset($p['show_titles'])): ?>
-                <p class="text-gray-600 text-sm">Used In: <?= htmlspecialchars($p['show_titles']) ?></p>
+                <p class="text-gray-700 text-sm leading-relaxed">Used In: <?= htmlspecialchars($p['show_titles']) ?></p>
               <?php endif; ?>
 
               <div class="flex gap-4 mt-2 text-sm">
@@ -93,5 +102,6 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     <?php endif; ?>
   </main>
+  <?php include '../footer.php'; ?>
 </body>
 </html>

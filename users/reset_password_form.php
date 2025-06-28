@@ -53,16 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php if ($success): ?>
       <p class="text-green-600 mb-4"><?= htmlspecialchars($success) ?></p>
-      <a href="login.php" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="login.php" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
     <?php else: ?>
       <form method="POST" class="space-y-4">
         <div>
           <label class="block font-semibold">New Password</label>
-          <input type="password" name="password" class="w-full border-gray-300 rounded p-2" required>
+          <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div>
           <label class="block font-semibold">Confirm Password</label>
-          <input type="password" name="confirm_password" class="w-full border-gray-300 rounded p-2" required>
+          <input type="password" name="confirm_password" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Reset Password</button>
       </form>

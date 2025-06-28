@@ -147,13 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-emerald-800 mb-6">Edit Costume</h1>
+    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Edit Costume</h1>
     <a href="costumes.php" class="text-blue-600 hover:underline mb-4">← Back to Costume List</a>
 
     <form action="" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
       <div>
         <label for="name" class="block font-medium mb-1">Name *</label>
-        <input type="text" name="name" id="name" value="<?= htmlspecialchars($costume['name']) ?>" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+        <input type="text" name="name" id="name" value="<?= htmlspecialchars($costume['name']) ?>" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
       </div>
 
       <div>
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label for="category_id" class="block font-medium mb-1">Category</label>
         <div class="flex items-center gap-4">
-          <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
             <option value="">-- Select Category --</option>
             <?php foreach ($categories as $category): ?>
               <option value="<?= $category['id'] ?>" <?= $costume['category_id'] == $category['id'] ? 'selected' : '' ?>>
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </option>
             <?php endforeach; ?>
           </select>
-          <button type="button" onclick="openCategoryPopup()" class="bg-emerald-700 text-white px-6 py-2 rounded hover:bg-emerald-600 transition">
+          <button type="button" onclick="openCategoryPopup()" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
             +Category
           </button>
         </div>
@@ -184,31 +184,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="decade" class="block font-medium mb-1">Era</label>
-          <select name="decade" id="decade" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <select name="decade" id="decade" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
             <option value="">-- Select Era --</option>
             <option value="Ancient" <?= $costume['decade'] === 'Ancient' ? 'selected' : '' ?>>Ancient</option>
             <option value="Medieval" <?= $costume['decade'] === 'Medieval' ? 'selected' : '' ?>>Medieval</option>
             <option value="Renaissance" <?= $costume['decade'] === 'Renaissance' ? 'selected' : '' ?>>Renaissance</option>
             <option value="Victorian" <?= $costume['decade'] === 'Victorian' ? 'selected' : '' ?>>Victorian</option>
+            <option value="1920s" <?= $costume['decade'] === '1920s' ? 'selected' : '' ?>>1920s</option>
+            <option value="1930s" <?= $costume['decade'] === '1930s' ? 'selected' : '' ?>>1930s</option>
+            <option value="1940s" <?= $costume['decade'] === '1940s' ? 'selected' : '' ?>>1940s</option>
+            <option value="1950s" <?= $costume['decade'] === '1950s' ? 'selected' : '' ?>>1950s</option>
+            <option value="1960s" <?= $costume['decade'] === '1960s' ? 'selected' : '' ?>>1960s</option>
+            <option value="1970s" <?= $costume['decade'] === '1970s' ? 'selected' : '' ?>>1970s</option>
+            <option value="1980s" <?= $costume['decade'] === '1980s' ? 'selected' : '' ?>>1980s</option>
+            <option value="1990s" <?= $costume['decade'] === '1990s' ? 'selected' : '' ?>>1990s</option>
             <option value="Modern" <?= $costume['decade'] === 'Modern' ? 'selected' : '' ?>>Modern</option>
             <option value="Future" <?= $costume['decade'] === 'Future' ? 'selected' : '' ?>>Future</option>
           </select>
         </div>
         <div>
           <label for="style" class="block font-medium mb-1">Style</label>
-          <input type="text" name="style" id="style" value="<?= htmlspecialchars($costume['style']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <input type="text" name="style" id="style" value="<?= htmlspecialchars($costume['style']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="location" class="block font-medium mb-1">Location</label>
-          <input type="text" name="location" id="location" value="<?= htmlspecialchars($costume['location']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <input type="text" name="location" id="location" value="<?= htmlspecialchars($costume['location']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
         </div>
 
         <div>
           <label for="itemcondition" class="block font-medium mb-1">Condition</label>
-          <select name="itemcondition" id="itemcondition" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <select name="itemcondition" id="itemcondition" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
             <option value="">-- Select Condition --</option>
             <option value="A" <?= $costume['itemcondition'] === 'A' ? 'selected' : '' ?>>Excellent</option>
             <option value="B" <?= $costume['itemcondition'] === 'B' ? 'selected' : '' ?>>Good</option>
@@ -222,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1">Used in Shows</label>
         <div class="relative">
-          <select id="showDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <select id="showDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
             <option value="">-- Select a Show --</option>
             <?php foreach ($shows as $show): ?>
               <?php if (!in_array($show['id'], $linkedShowIds)): ?>
@@ -290,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1">Linked Characters</label>
         <div class="relative">
-          <select id="characterDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+          <select id="characterDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
             <option value="">-- Select a Character --</option>
             <?php foreach ($characters as $character): ?>
               <?php if (!in_array($character['id'], $linkedCharacterIds)): ?>
@@ -356,23 +364,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </script>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-emerald-700 text-white px-6 py-2 rounded hover:bg-emerald-600 transition">
+        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
           Update Costume
         </button>
       </div>
     </form>
   </main>
+  <?php include '../footer.php'; ?>
+
 
   <!-- Category Popup -->
   <div id="category-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded shadow-lg w-96">
       <h2 class="text-xl font-bold mb-4">Add New Category</h2>
-      <input type="text" id="new-category-name" placeholder="Category Name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4">
+      <input type="text" id="new-category-name" placeholder="Category Name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B] mb-4">
       <div class="flex justify-end gap-4">
         <button type="button" onclick="closeCategoryPopup()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
           Cancel
         </button>
-        <button type="button" onclick="addCategory()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition">
+        <button type="button" onclick="addCategory()" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
           Add Category
         </button>
       </div>

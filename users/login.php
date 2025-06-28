@@ -52,7 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4">🎭 QSS Drama Login</h1>
+    <div class="flex items-center gap-3 pb-4">
+        <a href="/dramamanager/index.php"><img src="/dramamanager/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <p class="text-2xl font-bold text-[#7B1E3B]">
+            QSS Drama
+        </a>
+    </div>
 
     <?php if ($error): ?>
         <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
@@ -61,18 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" class="space-y-4">
         <div>
             <label class="block font-semibold">Username</label>
-            <input type="text" name="username" class="w-full border-gray-300 rounded p-2" required>
+            <input type="text" name="username" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div>
             <label class="block font-semibold">Password</label>
-            <input type="password" name="password" class="w-full border-gray-300 rounded p-2" required>
+            <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div class="flex items-center">
             <input type="checkbox" name="remember" id="remember" class="mr-2">
             <label for="remember" class="text-sm">Remember Me</label>
         </div>
 
-        <button type="submit" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Login</button>
+        <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Login</button>
     </form>
 
     <!-- Signup Buttons -->

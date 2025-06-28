@@ -55,7 +55,7 @@ $linkedStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-      <h1 class="text-2xl font-bold text-purple-800 mb-6">🎭 Linked Teachers and Students</h1>
+      <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">🎭 Linked Teachers and Students</h1>
 
       <!-- Linked Teachers Section -->
       <div class="mb-8">

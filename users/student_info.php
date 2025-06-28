@@ -53,7 +53,7 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-gray-100 text-gray-800">
 
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold mb-6 text-purple-800">👤 Your Characters</h1>
+    <h1 class="text-3xl font-bold mb-6 text-[#7B1E3B]">👤 Your Characters</h1>
 
     <?php if (empty($characters)): ?>
       <p class="text-gray-600">You have not been assigned to any characters yet.</p>

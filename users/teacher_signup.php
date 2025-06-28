@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4">🎭 Teacher Signup</h1>
+    <h1 class="text-2xl font-bold mb-4 text-[#7B1E3B]">Teacher Signup</h1>
 
     <?php if ($error): ?>
       <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
@@ -88,49 +88,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($success): ?>
       <!-- Success Message -->
       <p class="text-green-600 mb-4"><?= $success ?></p>
-      <a href="login.php" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="login.php" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
     <?php else: ?>
       <?php if (!isset($_SESSION['access_code_valid']) || !$_SESSION['access_code_valid']): ?>
         <!-- Access Code Form -->
         <form method="POST" id="access-code-form" class="space-y-4">
           <div>
             <label class="block font-semibold">Access Code</label>
-            <input type="text" name="access_code" class="w-full border-gray-300 rounded p-2" required>
+            <input type="text" name="access_code" class="w-full border-gray-300 rounded p-2 border" required>
           </div>
-          <button type="submit" name="access_code_submit" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Submit</button>
+          <button type="submit" name="access_code_submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Submit</button>
         </form>
       <?php else: ?>
         <!-- Signup Form -->
         <form method="POST" id="signup-form" class="space-y-4">
           <div>
             <label class="block font-semibold">First Name</label>
-            <input type="text" name="first_name" class="w-full border-gray-300 rounded p-2" required>
+            <input type="text" name="first_name" class="w-full border border-gray-300 rounded p-2" required>
           </div>
           <div>
             <label class="block font-semibold">Last Name</label>
-            <input type="text" name="last_name" class="w-full border-gray-300 rounded p-2" required>
+            <input type="text" name="last_name" class="w-full border border-gray-300 rounded p-2" required>
           </div>
           <div>
             <label class="block font-semibold">Preferred Teacher Name</label>
-            <input type="text" name="preferred_name" class="w-full border-gray-300 rounded p-2" required>
+            <input type="text" name="preferred_name" class="w-full border border-gray-300 rounded p-2" required>
           </div>
           <div>
             <label class="block font-semibold">Email</label>
-            <input type="email" name="email" class="w-full border-gray-300 rounded p-2" required>
+            <input type="email" name="email" class="w-full border border-gray-300 rounded p-2" required>
           </div>
           <div>
             <label class="block font-semibold">District No.</label>
-            <input type="number" name="district_no" class="w-full border-gray-300 rounded p-2" min="1" max="999" required>
+            <input type="number" name="district_no" class="w-full border border-gray-300 rounded p-2" min="1" max="999" required>
           </div>
           <div>
             <label class="block font-semibold">Password</label>
-            <input type="password" name="password" class="w-full border-gray-300 rounded p-2" required>
+            <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
           </div>
           <div>
             <label class="block font-semibold">Confirm Password</label>
-            <input type="password" name="confirm_password" class="w-full border-gray-300 rounded p-2" required>
+            <input type="password" name="confirm_password" class="w-full border border-gray-300 rounded p-2" required>
           </div>
-          <button type="submit" name="signup_submit" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Sign Up</button>
+          <button type="submit" name="signup_submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Sign Up</button>
         </form>
       <?php endif; ?>
     <?php endif; ?>

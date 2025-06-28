@@ -27,19 +27,19 @@ $ideas = $pdo->query("SELECT * FROM ideas ORDER BY created_at DESC")->fetchAll(P
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-blue-800 mb-6">💡 Future Line Ideas</h1>
+    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">💡 Future Line Ideas</h1>
 
     <!-- Add Idea Form -->
     <form method="POST" class="bg-white p-6 rounded-lg shadow space-y-4 mb-8">
       <div>
         <label for="quote" class="block font-semibold mb-1">Quote *</label>
-        <textarea name="quote" id="quote" required rows="3" class="w-full border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+        <textarea name="quote" id="quote" required rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]"></textarea>
       </div>
       <div>
         <label for="author" class="block font-semibold mb-1">Author (optional)</label>
-        <input type="text" name="author" id="author" class="w-full border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600">
+        <input type="text" name="author" id="author" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
       </div>
-      <button type="submit" class="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded transition">
+      <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-6 py-2 rounded transition">
         Add Idea
       </button>
     </form>
@@ -66,5 +66,6 @@ $ideas = $pdo->query("SELECT * FROM ideas ORDER BY created_at DESC")->fetchAll(P
       <?php endif; ?>
     </section>
   </main>
+  <?php include '../footer.php'; ?>
 </body>
 </html>

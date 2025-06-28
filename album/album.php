@@ -19,31 +19,33 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <?php include '../header.php'; ?>
 <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-10">
+    
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-        <h1 class="text-2xl font-bold text-purple-800 mb-6">📸 Photo Album</h1>
+        <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">📸 Photo Album</h1>
 
         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin')): ?>
         <form action="../backend/album/upload_photo.php" method="POST" enctype="multipart/form-data" class="mb-8 space-y-4">
+            
             <div>
-                <label class="block font-semibold">Photo</label>
+                <label class="block font-semibold">Photo Upload</label>
                 <input type="file" name="photo" accept="image/*" required>
             </div>
             <div>
-                <label class="block font-semibold">Show (optional)</label>
-                <select name="show" class="w-full border-gray-300 rounded p-2">
+                <label class="block font-semibold">Assign to Show (optional)</label>
+                <select name="show" class="w-full border border-gray-300 rounded p-2">
                     <option value="">General Photo</option>
                     <?php foreach ($shows as $show): ?>
                         <option value="<?= htmlspecialchars($show) ?>"><?= htmlspecialchars($show) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Upload Photo</button>
+            <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Upload Photo</button>
         </form>
         <?php endif; ?>
 
         <form method="GET" class="mb-6">
             <label class="block font-semibold mb-1">Filter by Show:</label>
-            <select name="show" onchange="this.form.submit()" class="w-full border-gray-300 rounded p-2 mb-2">
+            <select name="show" onchange="this.form.submit()" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
                 <option value="">All Photos</option>
                 <?php foreach ($shows as $show): ?>
                     <option value="<?= htmlspecialchars($show) ?>" <?= $show === $showFilter ? 'selected' : '' ?>><?= htmlspecialchars($show) ?></option>
@@ -56,15 +58,12 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 $showDir = $photo['showid'] ? preg_replace('/[^a-zA-Z0-9_\-]/', '_', $photo['showid']) : 'general';
                 $imgPath = "../uploads/photos/$showDir/" . $photo['filename'];
             ?>
-                <div class="relative border rounded shadow-sm p-2 bg-gray-50">
-                    <img src="<?= htmlspecialchars($imgPath) ?>" alt="" class="w-full h-48 object-cover rounded mb-2">
-                    <?php if ($photo['showid']): ?>
-                        <div class="text-xs text-purple-700 font-semibold"><?= htmlspecialchars($photo['showid']) ?></div>
-                    <?php else: ?>
-                        <div class="text-xs text-gray-500">General</div>
-                    <?php endif; ?>
-                    <div class="text-xs text-gray-400"><?= date('M j, Y', strtotime($photo['uploaded_at'])) ?></div>
-                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin')): ?>
+                <div class="relative rounded-xl shadow-md bg-white overflow-hidden border border-gray-200">
+                    <img src="<?= htmlspecialchars($imgPath) ?>" alt="" class="w-full h-48 object-cover">
+                    <div class="p-2 text-sm">
+                        <div class="font-semibold text-[#7B1E3B]"><?= htmlspecialchars($photo['showid'] ?? 'General') ?></div>
+                        <div class="text-gray-500 text-xs"><?= date('M j, Y', strtotime($photo['uploaded_at'])) ?></div>
+                        <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin')): ?>
                         <form method="POST" action="../backend/album/delete_photo.php" class="absolute bottom-2 right-2">
                             <input type="hidden" name="photo_id" value="<?= $photo['id'] ?>">
                             <input type="hidden" name="filename" value="<?= htmlspecialchars($photo['filename']) ?>">
@@ -72,6 +71,10 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button type="submit" onclick="return confirm('Delete this photo?')" class="text-xs text-red-600 hover:underline bg-white bg-opacity-80 px-2 py-1 rounded shadow">Delete</button>
                         </form>
                     <?php endif; ?>
+                    </div>
+
+                    
+                    
                 </div>
             <?php endforeach; ?>
         </div>

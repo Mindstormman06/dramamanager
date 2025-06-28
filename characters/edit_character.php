@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-purple-800 mb-6">Edit Character</h1>
+    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Edit Character</h1>
     <a href="characters.php?show_id=<?= $show_id ?>" class="text-blue-600 hover:underline mb-4">← Back to Character List</a>
 
     <?php if ($errors): ?>
@@ -169,16 +169,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     <?php endif; ?>
 
-    <form method="POST" class="bg-white p-6 rounded-lg shadow border border-purple-200 space-y-4">
+    <form method="POST" class="bg-white p-6 rounded-lg shadow border space-y-4">
       <div>
         <label for="stage_name" class="block font-medium mb-1">Stage Name *</label>
         <input type="text" name="stage_name" id="stage_name" required value="<?= htmlspecialchars($stage_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
       </div>
 
       <div>
         <label for="student_id" class="block font-medium mb-1">Linked Student</label>
-        <select name="student_id" id="student_id" class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600" onchange="toggleManualInput()">
+        <select name="student_id" id="student_id" class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" onchange="toggleManualInput()">
           <option value="">-- Select a Student --</option>
           <?php foreach ($students as $student): ?>
             <option value="<?= $student['id'] ?>" <?= $linked_student_id == $student['id'] ? 'selected' : '' ?>>
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div id="manual-input" class="<?= $linked_student_id ? 'hidden' : '' ?>">
         <label for="real_name" class="block font-medium mb-1">Real Name</label>
         <input type="text" name="real_name" id="real_name" value="<?= htmlspecialchars($real_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
       </div>
 
       <div>
@@ -200,12 +200,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-600 transition">
+        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
           Save Changes
         </button>
       </div>
     </form>
   </main>
+  <?php include '../footer.php'; ?>
 
   <script>
     function toggleManualInput() {
