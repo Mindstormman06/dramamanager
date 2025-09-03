@@ -37,9 +37,9 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
   <title>QSS Drama Portal</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="/dramamanager/favicon.ico?v=<?php echo md5_file('/dramamanager/favicon.ico') ?>" />
-  <link rel="manifest" href="/dramamanager/site.webmanifest">
-  <link rel="stylesheet" href="/dramamanager/styles.css">
+  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
@@ -69,15 +69,15 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
       
       <!-- Logo / Title -->
       <div class="flex items-center gap-3">
-        <a href="/dramamanager/index.php"><img src="/dramamanager/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
-        <a href="/dramamanager/index.php" class="text-2xl font-bold hover:text-[#FFD166] transition-colors">
+        <a href="/index.php"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/index.php" class="text-2xl font-bold hover:text-[#FFD166] transition-colors">
           QSS Drama
         </a>
       </div>
 
       <div class="relative flex items-center gap-4">
         <!-- Changelog Link -->
-        <a href="/dramamanager/changelog.php" class="text-sm font-semibold hover:text-[#FFD166] transition-colors">
+        <a href="/changelog.php" class="text-sm font-semibold hover:text-[#FFD166] transition-colors">
           📝 Changelog
         </a>
 
@@ -91,21 +91,21 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
               <ul class="py-2 text-sm">
                 <?php if ($_SESSION['role'] === 'teacher'): ?>
                   <li>
-                    <a href="/dramamanager/users/link_teachers.php" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
+                    <a href="/users/link_teachers.php" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
                   </li>
                   <li>
-                    <a href="/dramamanager/users/linked_teachers_and_students.php" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
+                    <a href="/users/linked_teachers_and_students.php" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
                   </li>
                 <?php endif; ?>
                 <li>
-                  <a href="/dramamanager/backend/users/logout.php" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Logout</a>
+                  <a href="/backend/users/logout.php" class="block px-4 py-2 hover:bg-gray-100 text-red-600">Logout</a>
                 </li>
               </ul>
             </div>
           </div>
         <?php else: ?>
           <!-- Login Button -->
-          <a href="/dramamanager/users/login.php" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
+          <a href="/users/login.php" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
             Login
           </a>
         <?php endif; ?>

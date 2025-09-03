@@ -62,14 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <title>Login | QSS Drama</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="/dramamanager/favicon.ico?v=<?php echo md5_file('/dramamanager/favicon.ico') ?>" />
-  <link rel="manifest" href="/dramamanager/site.webmanifest">
+  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
+  <link rel="manifest" href="/site.webmanifest">
 
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
     <div class="flex items-center gap-3 pb-4">
-        <a href="/dramamanager/index.php"><img src="/dramamanager/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/index.php"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
         <p class="text-2xl font-bold text-[#7B1E3B]">
             QSS Drama
         </a>

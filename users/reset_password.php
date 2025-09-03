@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <title>Reset Password | QSS Drama</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="/dramamanager/favicon.ico?v=<?php echo md5_file('/dramamanager/favicon.ico') ?>" />
-  <link rel="manifest" href="/dramamanager/site.webmanifest">
+  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
+  <link rel="manifest" href="/site.webmanifest">
 
 </head>
 <body class="bg-gray-100 text-gray-800">
