@@ -60,6 +60,7 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ├── props/                    # Prop management pages
 ├── scripts/                  # Script analysis and show creation pages
 ├── shows/                    # Show management pages
+├── schedule/                 # Rehearsal scheduling pages
 ├── uploads/                  # Uploaded files (scripts, photos, etc.)
 ├── users/                    # User management pages
 ├── index.php                 # Main dashboard
