@@ -44,25 +44,26 @@ app.post('/rehearsal', async (req, res) => {
     const guild = await client.guilds.fetch(GUILD_ID);
     await guild.members.fetch();
 
-    const participantsLines = students.map((s) => {
-      if (!s.discord_username) {
-        return `${s.first_name} ${s.last_name}`;
-      }
+  const participantsLines = students.map((s) => {
+    if (!s.discord_username || s.discord_username === 'NODISCORD') {
+      return `${s.first_name} ${s.last_name}`;
+    }
+    const member = guild.members.cache.find(m =>
+      m.user.tag.toLowerCase() === s.discord_username.toLowerCase()
+    );
+    return member ? `<@${member.id}>` : `${s.first_name} ${s.last_name}`;
+  });
+
+  const mentionedIds = students
+    .map((s) => {
+      if (!s.discord_username || s.discord_username === 'NODISCORD') return null;
       const member = guild.members.cache.find(m =>
         m.user.tag.toLowerCase() === s.discord_username.toLowerCase()
       );
-      return member ? `<@${member.id}>` : `${s.first_name} ${s.last_name}`;
-    });
-
-    const mentionedIds = students
-    .map((s) => {
-        if (!s.discord_username) return null;
-        const member = guild.members.cache.find(m =>
-        m.user.tag.toLowerCase() === s.discord_username.toLowerCase()
-        );
-        return member ? `<@${member.id}>` : null;
+      return member ? `<@${member.id}>` : null;
     })
-    .filter(Boolean); // remove nulls
+    .filter(Boolean);
+
 
 
     const embed = new EmbedBuilder()
