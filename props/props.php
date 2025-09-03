@@ -7,6 +7,9 @@ $allowedSorts = ['name', 'condition', 'category', 'show'];
 $sort = $_GET['sort'] ?? 'name'; // Default sort by name
 $sort = in_array($sort, $allowedSorts) ? $sort : 'name';
 
+//Default required role
+$required_role='props';
+
 // Map sort keys to database columns
 $sortColumn = match ($sort) {
     'condition' => 'props.itemcondition',
@@ -50,9 +53,11 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[#7B1E3B]">Props</h1>
-      <a href="add_prop.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
-        + Add Prop
-      </a>
+      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+        <a href="add_prop.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
+          + Add Prop
+        </a>
+      <?php endif; ?>
     </div>
 
     <div class="mb-4 text-sm">
@@ -64,9 +69,15 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <?php if (count($props) === 0): ?>
+      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
       <div class="text-center py-10 text-gray-500 italic">
-        No props found. Click <strong class="text-[#7B1E3B]">“Add Prop”</strong> to get started!
+        No costumes found. Click <strong class="text-[#7B1E3B]">“Add Prop”</strong> to get started!
       </div>
+      <?php else: ?>
+        <div class="text-center py-2 text-gray-500 italic">
+          No costumes found.
+        </div>
+      <?php endif; ?>
     <?php else: ?>
       <div class="grid gap-4 md:grid-cols-2">
         <?php foreach ($props as $p): ?>
@@ -92,10 +103,12 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <p class="text-gray-700 text-sm leading-relaxed">Used In: <?= htmlspecialchars($p['show_titles']) ?></p>
               <?php endif; ?>
 
-              <div class="flex gap-4 mt-2 text-sm">
-                <a href="edit_prop.php?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-                <a href="../backend/props/delete_prop.php?id=<?= $p['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this prop?');">Delete</a>
-              </div>
+              <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+                <div class="flex gap-4 mt-2 text-sm">
+                  <a href="edit_prop.php?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="../backend/props/delete_prop.php?id=<?= $p['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this prop?');">Delete</a>
+                </div>
+              <?php endif; ?>
             </div>
           </div>
         <?php endforeach; ?>

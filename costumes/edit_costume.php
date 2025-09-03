@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
+if (!in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 

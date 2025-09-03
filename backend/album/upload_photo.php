@@ -2,7 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'teacher' && $_SESSION['role'] !== 'admin')) {
+
+$required_role = 'stage_crew';
+if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'teacher' && $_SESSION['role'] !== 'admin' && !in_array($required_role, $_SESSION['student_roles']))) {
     http_response_code(403);
     exit('Unauthorized');
 }

@@ -14,12 +14,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare("SELECT * FROM students WHERE username = ?");
+        $stmt->execute([$username]);
+        $student = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare("
+            SELECT r.name 
+            FROM student_roles sr
+            JOIN roles r ON sr.role_id = r.id
+            WHERE sr.student_id = ?
+        ");
+        $stmt->execute([$student['id']]);
+        $roles = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
 
         // Note: Check against 'password_hash' column
         if ($user && password_verify($password, $user['password_hash'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['student_roles'] = $roles ?? null;
         
             if (!empty($_POST['remember'])) {
                 // Generate a random token

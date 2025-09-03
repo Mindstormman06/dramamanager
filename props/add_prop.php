@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
+if (!in_array('props', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');

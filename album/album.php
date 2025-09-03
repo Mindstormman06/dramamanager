@@ -4,6 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../backend/db.php';
 
+//Default required role
+$required_role = 'stage_crew';
 // Fetch shows for dropdown
 $shows = $pdo->query("SELECT title FROM shows")->fetchAll(PDO::FETCH_COLUMN);
 
@@ -23,7 +25,7 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
         <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">📸 Photo Album</h1>
 
-        <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin')): ?>
+        <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles']))): ?>
         <form action="../backend/album/upload_photo.php" method="POST" enctype="multipart/form-data" class="mb-8 space-y-4">
             
             <div>
@@ -63,7 +65,7 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="p-2 text-sm">
                         <div class="font-semibold text-[#7B1E3B]"><?= htmlspecialchars($photo['showid'] ?? 'General') ?></div>
                         <div class="text-gray-500 text-xs"><?= date('M j, Y', strtotime($photo['uploaded_at'])) ?></div>
-                        <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin')): ?>
+                        <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles']))): ?>
                         <form method="POST" action="../backend/album/delete_photo.php" class="absolute bottom-2 right-2">
                             <input type="hidden" name="photo_id" value="<?= $photo['id'] ?>">
                             <input type="hidden" name="filename" value="<?= htmlspecialchars($photo['filename']) ?>">

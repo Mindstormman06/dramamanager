@@ -7,6 +7,9 @@ $allowedSorts = ['name', 'era', 'style', 'category', 'show', 'condition'];
 $sort = $_GET['sort'] ?? 'name'; // Default sort by name
 $sort = in_array($sort, $allowedSorts) ? $sort : 'name';
 
+// Default allowed roles
+$required_role='costumes';
+
 // Map sort keys to database columns
 $sortColumn = match ($sort) {
     'era' => 'costumes.decade',
@@ -53,9 +56,11 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[#7B1E3B]">Costumes</h1>
-      <a href="add_costume.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
-        + Add Costume
-      </a>
+      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+        <a href="add_costume.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
+          + Add Costume
+        </a>
+      <?php endif; ?>
     </div>
 
     <div class="mb-4 text-sm">
@@ -70,9 +75,15 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <?php if (count($costumes) === 0): ?>
+      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
       <div class="text-center py-10 text-gray-500 italic">
         No costumes found. Click <strong class="text-[#7B1E3B]">“Add Costume”</strong> to get started!
       </div>
+      <?php else: ?>
+        <div class="text-center py-2 text-gray-500 italic">
+          No costumes found.
+        </div>
+      <?php endif; ?>
     <?php else: ?>
       <div class="grid gap-4 md:grid-cols-2">
         <?php foreach ($costumes as $c): ?>
@@ -104,11 +115,12 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <?php if (isset($c['show_titles'])): ?>
                 <p class="text-gray-700 text-sm leading-relaxed">Used In: <?= htmlspecialchars($c['show_titles']) ?></p>
               <?php endif; ?>
-
-              <div class="flex gap-4 mt-2 text-sm">
-                <a href="edit_costume.php?id=<?= $c['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-                <a href="../backend/costumes/delete_costume.php?id=<?= $c['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this costume?');">Delete</a>
-              </div>
+              <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+                <div class="flex gap-4 mt-2 text-sm">
+                  <a href="edit_costume.php?id=<?= $c['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="../backend/costumes/delete_costume.php?id=<?= $c['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this costume?');">Delete</a>
+                </div>
+              <?php endif; ?>
             </div>
           </div>
         <?php endforeach; ?>

@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php'; // Include header for authentication and session management
 
+if (!in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
@@ -12,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_id = !empty($_POST['category_id']) ? intval($_POST['category_id']) : null;
     $show_ids = $_POST['show_ids'] ?? [];
     $character_ids = $_POST['character_ids'] ?? []; // New field for selected characters
+
+
 
     if ($name === '') {
         die("Name is required.");
