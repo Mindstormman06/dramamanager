@@ -10,12 +10,13 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = trim($_POST['first_name'] ?? '');
     $lastName = trim($_POST['last_name'] ?? '');
+    $discordUsername = trim($_POST['discord_username'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $teacherCode = trim($_POST['teacher_code'] ?? '');
 
     // Validate form inputs
-    if (empty($firstName) || empty($lastName) || empty($password) || empty($confirmPassword) || empty($teacherCode)) {
+    if (empty($firstName) || empty($lastName) || empty($discordUsername) || empty($password) || empty($confirmPassword) || empty($teacherCode)) {
         $error = 'All fields are required.';
     } elseif (!preg_match('/^[a-zA-Z]{2,}$/', $firstName)) {
         $error = 'First name must contain only letters and be at least 2 characters long.';
@@ -48,10 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Insert student into the students table
             $stmt = $pdo->prepare("
-                INSERT INTO students (username, first_name, last_name, teacher_id)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO students (username, first_name, last_name, discord_username, teacher_id)
+                VALUES (?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$username, $firstName, $lastName, $teacher['id']]);
+            $stmt->execute([$username, $firstName, $lastName, $discordUsername, $teacher['id']]);
 
             // Insert student into the users table
             $stmt = $pdo->prepare("
@@ -75,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="/dramamanager/favicon.ico?v=<?php echo md5_file('/dramamanager/favicon.ico') ?>" />
   <link rel="manifest" href="/dramamanager/site.webmanifest">
-
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
@@ -99,6 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
           <label class="block font-semibold">Last Name</label>
           <input type="text" name="last_name" class="w-full border border-gray-300 rounded p-2" required>
+        </div>
+        <div>
+          <label class="block font-semibold">Discord Username - This is NOT your display name <a style="color:#0000EE; text-decoration: underline;" href="../uploads/usernameexample.png" target="Discord Username Example">(Example)</a></label>
+          <input type="text" name="discord_username" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div>
           <label class="block font-semibold">Password</label>

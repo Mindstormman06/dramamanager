@@ -5,13 +5,14 @@ include '../header.php';
 
 $isTeacher = isset($_SESSION['role']) && $_SESSION['role'] === 'teacher';
 $isStudent = isset($_SESSION['role']) && $_SESSION['role'] === 'student';
-$userId = $_SESSION['username'] ?? null;
+$userId = $_SESSION['user_id'] ?? null;
+$username = $_SESSION['username'] ?? '';
 
 // Fetch rehearsals
 if ($isStudent) {
     // Get the student's ID from the students table using their user_id
     $stmt = $pdo->prepare("SELECT id FROM students WHERE username = ?");
-    $stmt->execute([$userId]);
+    $stmt->execute([$username]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
     $studentId = $student ? $student['id'] : null;
 
@@ -87,7 +88,7 @@ if ($isStudent && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['discord
     $discordUsername = trim($_POST['discord_username']);
     // Get student ID
     $stmt = $pdo->prepare("SELECT id FROM students WHERE username = ?");
-    $stmt->execute([$userId]);
+    $stmt->execute([$username]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($student) {
         $stmt = $pdo->prepare("UPDATE students SET discord_username = ? WHERE id = ?");
@@ -142,7 +143,7 @@ if ($isTeacher && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 $currentDiscordUsername = '';
 if ($isStudent) {
     $stmt = $pdo->prepare("SELECT discord_username FROM students WHERE username = ?");
-    $stmt->execute([$userId]);
+    $stmt->execute([$username]);
     $currentDiscordUsername = $stmt->fetchColumn() ?: '';
 }
 ?>
