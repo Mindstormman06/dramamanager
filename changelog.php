@@ -21,6 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } else {
             $stmt = $pdo->prepare("INSERT INTO changelog (title, content) VALUES (?, ?)");
             $stmt->execute([$title, $content]);
+
+            // Send to Discord bot
+            $botUrl = 'http://10.0.0.47:3079/changelog'; // or your bot server's address
+            $payload = json_encode([
+                'title' => $title,
+                'description' => $content
+            ]);
+            $ch = curl_init($botUrl);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_exec($ch);
+            curl_close($ch);
+
             header('Location: changelog.php');
             exit;
         }

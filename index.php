@@ -24,6 +24,12 @@ include 'header.php';
       <p class="text-gray-700">Browse, add, and manage props by category, location, and condition.</p>
     </a>
 
+    <!-- Rehearsal Schedule -->
+    <a href="schedule/schedule.php" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
+      <h2 class="text-xl font-semibold text-[#7B1E3B] mb-2">📅 Rehearsal Schedule</h2>
+      <p class="text-gray-700">View upcoming rehearsals. Teachers can schedule new rehearsals and select participants.</p>
+    </a>
+
     <!-- Student-only block -->
     <?php if ($_SESSION['role'] == 'student'): ?>
     <a href="users/student_info.php" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
@@ -62,6 +68,14 @@ include 'header.php';
       <h2 class="text-xl font-semibold text-[#7B1E3B] mb-2">📸 Photo Album</h2>
       <p class="text-gray-700">View photos from rehearsals and past performances.</p>
     </a>
+
+    <?php if ($_SESSION['role'] == 'teacher' || $_SESSION['role'] == 'admin'): ?>
+    <!-- Bot Settings -->
+    <a href="bot/bot_settings.php" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
+      <h2 class="text-xl font-semibold text-[#7B1E3B] mb-2">🤖 Bot Settings</h2>
+      <p class="text-gray-700">Manage Discord bot channels and notification settings.</p>
+    </a>
+    <?php endif; ?>
 
   </div>
 </main>
