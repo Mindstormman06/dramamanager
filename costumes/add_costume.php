@@ -1,8 +1,7 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php'; // Include header for authentication and session management
-
-if (!in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+if ($_SESSION['role'] != 'teacher' && !in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
 
 
 // Handle form submission

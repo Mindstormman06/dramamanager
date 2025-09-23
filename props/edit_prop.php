@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
-if (!in_array('props', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+if ($_SESSION['role'] != 'teacher' && !in_array('props', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
 
 if (!isset($_GET['id'])) {
     die("Prop ID is missing.");
