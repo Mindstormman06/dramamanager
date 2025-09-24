@@ -36,7 +36,7 @@ $escapedScriptPath = escapeshellarg($pythonScriptPath);
 $escapedPath = escapeshellarg($targetPath);
 
 // Set correct Python binary path
-$pythonBin = 'C:/Users/Aiden/AppData/Local/Programs/Python/Python38/python.exe';
+$pythonBin = 'py';
 
 if (empty($characterList)) {
     // AUTO-DETECT mode

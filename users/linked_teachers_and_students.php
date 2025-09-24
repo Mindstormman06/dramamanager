@@ -95,6 +95,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student'])) {
     exit;
 }
 
+// Handle password reset request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_password_reset'])) {
+    $studentId = intval($_POST['student_id']);
+    // Get the student's username
+    $stmt = $pdo->prepare("SELECT username FROM students WHERE id = ?");
+    $stmt->execute([$studentId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $stmt = $pdo->prepare("UPDATE users SET reset_requested = 1 WHERE username = ?");
+        $stmt->execute([$row['username']]);
+    }
+    header("Location: linked_teachers_and_students.php");
+    exit;
+}
+
 // Fetch classes for this teacher
 $stmt = $pdo->prepare("SELECT * FROM classes WHERE teacher_id = ?");
 $stmt->execute([$teacherId]);
@@ -197,27 +212,32 @@ if (!empty($allStudentIds)) {
                                     <td class="border border-gray-300 px-4 py-2"><?= htmlspecialchars($student['username']) ?></td>
                                     <td class="border border-gray-300 px-4 py-2"><?= htmlspecialchars($student['first_name']) ?></td>
                                     <td class="border border-gray-300 px-4 py-2"><?= htmlspecialchars($student['last_name']) ?></td>
-                                    <td class="border border-gray-300 px-4 py-2">
-                                        <form method="POST" class="inline">
+                                    <td class="border border-gray-300 px-2 py-1 align-middle">
+                                        <form method="POST" class="inline" style="display:inline-block; margin:0; padding:0;">
                                             <input type="hidden" name="student_id" value="<?= $student['student_id'] ?>">
                                             <?php foreach ($roles as $role): ?>
-                                                <label class="mr-2">
+                                                <label class="mr-1 text-xs align-middle">
                                                     <input type="checkbox" name="roles[]" value="<?= $role['id'] ?>"
-                                                        <?= (isset($studentRoles[$student['student_id']]) && in_array($role['id'], $studentRoles[$student['student_id']])) ? 'checked' : '' ?>>
+                                                        <?= (isset($studentRoles[$student['student_id']]) && in_array($role['id'], $studentRoles[$student['student_id']])) ? 'checked' : '' ?>
+                                                        class="align-middle h-3 w-3">
                                                     <?= htmlspecialchars($role['name']) ?>
                                                 </label>
                                             <?php endforeach; ?>
-                                            <button type="submit" name="update_roles" class="ml-2 bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded">Update</button>
+                                            <button type="submit" name="update_roles" class="ml-1 bg-blue-600 hover:bg-blue-500 text-white px-2 py-0.5 rounded text-xs">Update</button>
                                         </form>
                                     </td>
-                                    <td class="border border-gray-300 px-4 py-2">
-                                        <form method="POST" style="display:inline" onsubmit="return confirm('Remove this student from this class?');">
+                                    <td class="border border-gray-300 px-2 py-1 align-middle whitespace-nowrap">
+                                        <form method="POST" style="display:inline-block; margin-right:2px;">
                                             <input type="hidden" name="class_student_id" value="<?= $student['class_student_id'] ?>">
-                                            <button type="submit" name="remove_from_class" class="bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1 rounded">Remove from Class</button>
+                                            <button type="submit" name="remove_from_class" class="bg-yellow-600 hover:bg-yellow-500 text-white px-2 py-0.5 rounded text-xs">Remove</button>
                                         </form>
-                                        <form method="POST" style="display:inline" onsubmit="return confirm('Delete this student account entirely? This cannot be undone.');">
+                                        <form method="POST" style="display:inline-block; margin-right:2px;">
                                             <input type="hidden" name="student_id" value="<?= $student['student_id'] ?>">
-                                            <button type="submit" name="delete_student" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded">Delete Student</button>
+                                            <button type="submit" name="delete_student" class="bg-red-600 hover:bg-red-500 text-white px-2 py-0.5 rounded text-xs">Delete</button>
+                                        </form>
+                                        <form method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="student_id" value="<?= $student['student_id'] ?>">
+                                            <button type="submit" name="request_password_reset" class="bg-blue-700 hover:bg-blue-500 text-white px-2 py-0.5 rounded text-xs">Reset PW</button>
                                         </form>
                                     </td>
                                 </tr>

@@ -26,11 +26,12 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">📸 Photo Album</h1>
 
         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles']))): ?>
-        <form action="../backend/album/upload_photo.php" method="POST" enctype="multipart/form-data" class="mb-8 space-y-4">
+        <form action="../backend/album/upload_photo.php" method="POST" enctype="multipart/form-data" class="mb-8 space-y-4" id="photoUploadForm">
             
             <div>
                 <label class="block font-semibold">Photo Upload</label>
-                <input type="file" name="photo" accept="image/*" required>
+                <input type="file" name="photo" id="photoInput" accept=".jpg,.jpeg,.png,.gif,.webp,image/*" required>
+                <p id="photoError" class="text-red-600 text-sm mt-1 hidden"></p>
             </div>
             <div>
                 <label class="block font-semibold">Assign to Show (optional)</label>
@@ -83,3 +84,31 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </main>
 <?php include '../footer.php'; ?>
+<script>
+document.getElementById('photoInput').addEventListener('change', function(e) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const file = this.files[0];
+    const errorElem = document.getElementById('photoError');
+    errorElem.classList.add('hidden');
+    errorElem.textContent = '';
+
+    if (file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!allowedExts.includes(ext) || !allowedTypes.includes(file.type)) {
+            errorElem.textContent = 'Invalid file type. Only JPG, PNG, GIF, and WEBP images are allowed.';
+            errorElem.classList.remove('hidden');
+            this.value = '';
+        }
+    }
+});
+
+document.getElementById('photoUploadForm').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('photoInput');
+    if (!fileInput.value) {
+        e.preventDefault();
+        document.getElementById('photoError').textContent = 'Please select a valid image file.';
+        document.getElementById('photoError').classList.remove('hidden');
+    }
+});
+</script>
