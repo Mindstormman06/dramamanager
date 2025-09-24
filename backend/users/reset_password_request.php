@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../db.php';
 
-if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin');
+if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin') die('You are not authorized to access this page.');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
