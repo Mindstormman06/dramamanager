@@ -40,6 +40,10 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 - Link teachers and students for collaboration.
 - Reset passwords and manage user accounts.
 
+### 8. **Rehearsal Scheduling**
+- Create rehearsals involving specific students.
+- Send notifications to a Discord bot informing the students.
+
 ---
 
 ## Project Structure
@@ -48,26 +52,34 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ├── backend/
 │   ├── db.php                # Database connection
 │   ├── album/                # Backend logic for photo album
-│   ├── scripts/              # Python and PHP scripts for script analysis
+│   ├── characters/           # Backend logic for characters
+│   ├── costumes/             # Backend logic for costumes
+│   ├── ideas/                # Backend logic for ideas
 │   ├── props/                # Backend logic for props
+│   ├── schedule/             # Backend logic for schedule
+│   ├── script_conversion/    # Python utilities for script formatting
+│   ├── scripts/              # Python and PHP scripts for script analysis
 │   ├── shows/                # Backend logic for shows
-│   ├── users/                # Backend logic for user management
-│   └── script_conversion/    # Python utilities for script formatting
+│   └── users/                # Backend logic for user management
 ├── album/                    # Photo album page
+├── bot/                      # Discord bot settings and JS
 ├── characters/               # Character management pages
 ├── costumes/                 # Costume management pages
 ├── ideas/                    # Ideas planner pages
 ├── props/                    # Prop management pages
+├── schedule/                 # Rehearsal scheduling page
 ├── scripts/                  # Script analysis and show creation pages
 ├── shows/                    # Show management pages
 ├── schedule/                 # Rehearsal scheduling pages
 ├── uploads/                  # Uploaded files (scripts, photos, etc.)
 ├── users/                    # User management pages
+├── vendor/                   # Installed requirements (composer, parsedown, etc.)
 ├── index.php                 # Main dashboard
 ├── header.php                # Header template
 ├── footer.php                # Footer template
 ├── changelog.php             # Changelog Page
 ├── mascot.php                # Shows the page mascot
+├── router.php                # URL routes for the site
 └── README.md                 # Project documentation
 ```
 
