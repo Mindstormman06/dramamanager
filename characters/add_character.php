@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Redirect back to the characters page for the selected show
-        header("Location: characters.php?show_id=$show_id");
+        header("Location: /characters/?show_id=$show_id");
         exit;
     }
 }
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Add New Character</h1>
-    <a href="characters.php?show_id=<?= $show_id ?>" class="text-blue-600 hover:underline mb-4">← Back to Character List</a>
+    <a href="/characters/?show_id=<?= $show_id ?>" class="text-blue-600 hover:underline mb-4">← Back to Character List</a>
 
     <?php if ($errors): ?>
       <div class="bg-red-100 text-red-700 border border-red-300 p-4 rounded mb-6">

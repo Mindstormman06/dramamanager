@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
-if ($_SESSION['role'] != 'teacher' && !in_array('props', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin' && !in_array('props', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header("Location: props.php");
+    header("Location: /props/");
     exit;
 }
 
@@ -113,7 +113,7 @@ $shows = $pdo->query("SELECT id, title, semester, year FROM shows ORDER BY year 
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Add New Prop</h1>
-    <a href="props.php" class="text-blue-600 hover:underline mb-4">← Back to Prop List</a>
+    <a href="/props/" class="text-blue-600 hover:underline mb-4">← Back to Prop List</a>
 
     <form action="" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
       <div>

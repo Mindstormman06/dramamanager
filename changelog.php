@@ -3,7 +3,7 @@ require_once __DIR__ . '/backend/db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 $parsedown = new Parsedown();
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 // Check if the user is logged in and has the admin role
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             curl_exec($ch);
             curl_close($ch);
 
-            header('Location: changelog.php');
+            header('Location: /changelog/');
             exit;
         }
     } elseif ($action === 'edit' && $isAdmin) {
@@ -49,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } else {
             $stmt = $pdo->prepare("UPDATE changelog SET title = ?, content = ? WHERE id = ?");
             $stmt->execute([$title, $content, $id]);
-            header('Location: changelog.php');
+            header('Location: /changelog/');
             exit;
         }
     } elseif ($action === 'delete' && $isAdmin) {
         $id = intval($_POST['id']);
         $stmt = $pdo->prepare("DELETE FROM changelog WHERE id = ?");
         $stmt->execute([$id]);
-        header('Location: changelog.php');
+        header('Location: /changelog/');
         exit;
     }
 }
@@ -137,7 +137,7 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <?php endif; ?>
 
       <div class="mt-6">
-        <a href="index.php" class="text-blue-600 hover:underline">← Back to Dashboard</a>
+        <a href="/" class="text-blue-600 hover:underline">← Back to Dashboard</a>
       </div>
     </div>
   </main>

@@ -1,6 +1,11 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
+
+if (isset($_SESSION['user_id'])) {
+    header('Location: /');
+    exit;
+}
 
 $error = '';
 
@@ -48,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setcookie('remember_token', $token, time() + (86400 * 30), "/", "", false, true); // HttpOnly
             }
         
-            header("Location: ../index.php");
+            header("Location: /");
             exit;
         } else {
             $error = "Invalid username or password.";
@@ -71,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
     <div class="flex items-center gap-3 pb-4">
-        <a href="/index.php"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
         <p class="text-2xl font-bold text-[#7B1E3B]">
             QSS Drama
         </a>
@@ -102,14 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">Don't have an account?</p>
         <div class="flex justify-center gap-4 mt-2">
-            <a href="student_signup.php" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Student Signup</a>
-            <a href="teacher_signup.php" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded">Teacher Signup</a>
+            <a href="/register/student/" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Student Signup</a>
+            <a href="/register/teacher/" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded">Teacher Signup</a>
         </div>
     </div>
 
     <div class="mt-6 text-center">
       <p class="text-sm text-gray-600">Forgot your password?</p>
-      <a href="reset_password.php" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded mt-2 inline-block">
+      <a href="/register/reset/" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded mt-2 inline-block">
         Reset Password
       </a>
     </div>

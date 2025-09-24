@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
-    header('Location: ../users/login.php');
+    header('Location: /login/');
     exit;
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class'])) {
         $stmt = $pdo->prepare("INSERT INTO classes (name, teacher_id) VALUES (?, ?)");
         $stmt->execute([$className, $teacherId]);
     }
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
         $stmt = $pdo->prepare("INSERT IGNORE INTO class_students (class_id, student_id) VALUES (?, ?)");
         $stmt->execute([$classId, $student['id']]);
     }
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_class']))
     $classStudentId = intval($_POST['class_student_id']);
     $stmt = $pdo->prepare("DELETE FROM class_students WHERE id = ?");
     $stmt->execute([$classStudentId]);
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_roles'])) {
             $stmt->execute([$studentId, intval($roleId)]);
         }
     }
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student'])) {
     }
 
     // Also remove from all student_roles and class_students (handled by ON DELETE CASCADE if set)
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_password_rese
         $stmt = $pdo->prepare("UPDATE users SET reset_requested = 1 WHERE username = ?");
         $stmt->execute([$row['username']]);
     }
-    header("Location: linked_teachers_and_students.php");
+    header("Location: /info/linked/");
     exit;
 }
 

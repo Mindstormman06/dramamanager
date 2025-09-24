@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 // Clear token from DB
 if (isset($_SESSION['user_id'])) {
@@ -12,6 +12,6 @@ session_unset();
 session_destroy();
 setcookie('remember_token', '', time() - 3600, '/');
 
-header("Location: ../../users/login.php");
+header("Location: /login/");
 exit;
 

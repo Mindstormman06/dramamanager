@@ -1,8 +1,7 @@
 <?php
-session_start();
-
+if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['new_characters']) || !isset($_SESSION['new_character_counts']) || !isset($_SESSION['show_id'])) {
-    header("Location: shows.php");
+    header("Location: /shows/");
     exit;
 }
 
@@ -94,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     unset($_SESSION['new_character_counts']);
     unset($_SESSION['show_id']);
 
-    header("Location: shows.php?success=new_characters_added");
+    header("Location: /shows/?success=new_characters_added");
     exit;
 }
 ?>

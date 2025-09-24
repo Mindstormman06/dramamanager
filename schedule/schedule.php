@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
@@ -79,7 +79,7 @@ if ($isTeacher && $_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_exec($ch);
     curl_close($ch);
 
-    header("Location: schedule.php");
+    header("Location: /schedule/");
     exit;
 }
 
@@ -135,7 +135,7 @@ if ($isTeacher && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     // Now delete the rehearsal
     $stmt = $pdo->prepare("DELETE FROM rehearsals WHERE id = ?");
     $stmt->execute([$deleteId]);
-    header("Location: schedule.php");
+    header("Location: /schedule/");
     exit;
 }
 

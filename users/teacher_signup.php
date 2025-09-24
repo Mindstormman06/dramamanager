@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 
 // Reset access code validation on page reload
@@ -90,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($success): ?>
       <!-- Success Message -->
       <p class="text-green-600 mb-4"><?= $success ?></p>
-      <a href="login.php" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="/login/" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
     <?php else: ?>
       <?php if (!isset($_SESSION['access_code_valid']) || !$_SESSION['access_code_valid']): ?>
         <!-- Access Code Form -->

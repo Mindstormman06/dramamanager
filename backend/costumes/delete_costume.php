@@ -25,5 +25,5 @@ $pdo->prepare("DELETE FROM showcostumes WHERE costume_id = ?")->execute([$costum
 // Delete from costumes
 $pdo->prepare("DELETE FROM costumes WHERE id = ?")->execute([$costume_id]);
 
-header("Location: ../../costumes/costumes.php");
+header("Location: /costumes/");
 exit;

@@ -13,7 +13,7 @@ include '../header.php';
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">📜 Analyze Script</h1>
 
-    <form action="../backend/scripts/process_script.php" method="POST" enctype="multipart/form-data"
+    <form action="/backend/scripts/process_script.php" method="POST" enctype="multipart/form-data"
           class="bg-white p-6 rounded-lg shadow border space-y-6">
 
       <div>

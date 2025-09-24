@@ -7,5 +7,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $stmt->execute([$id]);
 }
 
-header("Location: ../../ideas/ideas.php");
+header("Location: /ideas/");
 exit;

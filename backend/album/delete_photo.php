@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 
 $required_role = 'stage_crew';
 
@@ -22,5 +21,5 @@ if ($id && $filename) {
     $filePath = __DIR__ . '/../../uploads/photos/' . $showDir . '/' . $filename;
     if (file_exists($filePath)) unlink($filePath);
 }
-header('Location: ../../album/album.php');
+header('Location: /album/');
 exit;

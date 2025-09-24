@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../db.php';
 
+if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin');
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
 
@@ -12,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("UPDATE users SET reset_requested = 1 WHERE username = ?");
     $stmt->execute([$username]);
 
-    header('Location: ../../users/linked_teachers_and_students.php');
+    header('Location: /info/linked/');
     exit;
 }
 ?>

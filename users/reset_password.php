@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
 
     <?php if ($success): ?>
       <p class="text-green-600 mb-4"><?= htmlspecialchars($success) ?></p>
-      <a href="login.php" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="/login/" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
     <?php elseif ($step === 1): ?>
       <form method="POST" class="space-y-4">
         <div>
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
         <button type="submit" name="check_eligibility" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Check Reset Eligibility</button>
       </form>
       <div class="mt-4">
-        <a href="login.php" class="text-blue-600 hover:underline">Back to Login</a>
+        <a href="/login/" class="text-blue-600 hover:underline">Back to Login</a>
       </div>
     <?php elseif ($step === 2): ?>
       <form method="POST" class="space-y-4">
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
         <button type="submit" name="reset_password" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Reset Password</button>
       </form>
       <div class="mt-4">
-        <a href="login.php" class="text-blue-600 hover:underline">Back to Login</a>
+        <a href="/login/" class="text-blue-600 hover:underline">Back to Login</a>
       </div>
     <?php endif; ?>
   </main>

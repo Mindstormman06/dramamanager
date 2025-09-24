@@ -49,7 +49,7 @@ if (!$show_id):
   <main class="max-w-xl mx-auto px-4 py-10">
     <h1 class="text-2xl font-bold mb-6 text-[#7B1E3B]">👥 View Characters by Show</h1>
 
-    <form method="GET" action="characters.php" class="space-y-4">
+    <form method="GET" action="/characters/" class="space-y-4">
       <label for="show_id" class="block text-sm font-medium">Select a Show:</label>
       <select name="show_id" id="show_id"
               class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required>
@@ -97,7 +97,7 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[#7B1E3B]">Characters</h1>
-      <a href="add_character.php?show_id=<?= $show_id ?>" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
+      <a href="/characters/add/?show_id=<?= $show_id ?>" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
         + Add Character
       </a>
     </div>
@@ -132,7 +132,7 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
               Lines: <span class="font-semibold"><?= $char['line_count'] ?? 0 ?></span>
             </div>
             <div class="flex gap-4 mt-2 text-sm">
-              <a href="edit_character.php?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-blue-600 hover:underline">Edit</a>
+              <a href="/characters/edit/?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-blue-600 hover:underline">Edit</a>
               <a href="../backend/characters/delete_character.php?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-red-600 hover:underline"
                  onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
             </div>

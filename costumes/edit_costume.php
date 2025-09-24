@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
-if ($_SESSION['role'] != 'teacher' && !in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin' && !in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
 
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header("Location: costumes.php");
+    header("Location: /costumes/");
     exit;
 }
 ?>
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Edit Costume</h1>
-    <a href="costumes.php" class="text-blue-600 hover:underline mb-4">← Back to Costume List</a>
+    <a href="/costumes/" class="text-blue-600 hover:underline mb-4">← Back to Costume List</a>
 
     <form action="" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
       <div>

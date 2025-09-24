@@ -25,5 +25,5 @@ $pdo->prepare("DELETE FROM showprops WHERE prop_id = ?")->execute([$prop_id]);
 // Delete from props
 $pdo->prepare("DELETE FROM props WHERE id = ?")->execute([$prop_id]);
 
-header("Location: ../../props/props.php");
+header("Location: /props/");
 exit;

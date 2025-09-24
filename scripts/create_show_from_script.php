@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
@@ -129,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['character_list']);
         unset($_SESSION['uploaded_script_path']);
 
-        header("Location: ../shows/shows.php");
+        header("Location: /shows/");
         exit;
     }
 }

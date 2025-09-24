@@ -54,7 +54,7 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[#7B1E3B]">Props</h1>
       <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
-        <a href="add_prop.php" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
+        <a href="/props/add/" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
           + Add Prop
         </a>
       <?php endif; ?>
@@ -105,7 +105,7 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
               <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
                 <div class="flex gap-4 mt-2 text-sm">
-                  <a href="edit_prop.php?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="/props/edit/?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
                   <a href="../backend/props/delete_prop.php?id=<?= $p['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this prop?');">Delete</a>
                 </div>
               <?php endif; ?>

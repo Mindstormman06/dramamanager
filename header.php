@@ -71,15 +71,15 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
       
       <!-- Logo / Title -->
       <div class="flex items-center gap-3">
-        <a href="/index.php"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
-        <a href="/index.php" class="text-2xl font-bold hover:text-[#FFD166] transition-colors">
+        <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/" class="text-2xl font-bold hover:text-[#FFD166] transition-colors">
           QSS Drama
         </a>
       </div>
 
       <div class="relative flex items-center gap-4">
         <!-- Changelog Link -->
-        <a href="/changelog.php" class="text-sm font-semibold hover:text-[#FFD166] transition-colors">
+        <a href="/changelog/" class="text-sm font-semibold hover:text-[#FFD166] transition-colors">
           📝 Changelog
         </a>
 
@@ -93,10 +93,10 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
               <ul class="py-2 text-sm">
                 <?php if ($_SESSION['role'] === 'teacher'): ?>
                   <li>
-                    <a href="/users/link_teachers.php" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
+                    <a href="/link/" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
                   </li>
                   <li>
-                    <a href="/users/linked_teachers_and_students.php" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
+                    <a href="/info/linked/" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
                   </li>
                 <?php endif; ?>
                 <li>
@@ -107,7 +107,7 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
           </div>
         <?php else: ?>
           <!-- Login Button -->
-          <a href="/users/login.php" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
+          <a href="/login/" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
             Login
           </a>
         <?php endif; ?>

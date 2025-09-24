@@ -91,7 +91,7 @@ foreach ($normalizedData as $name => $counts) {
 
 // Store new characters and their counts in the session for prompting
 if (!empty($newCharacters)) {
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) session_start();
     $_SESSION['new_characters'] = $newCharacters;
     $_SESSION['new_character_counts'] = $newCharacterCounts; // Include counts
     $_SESSION['show_id'] = $show_id;
@@ -101,5 +101,5 @@ if (!empty($newCharacters)) {
 }
 
 // Redirect back to the shows page if no new characters are found
-header("Location: ../../shows/shows.php?success=scan_complete");
+header("Location: /shows/?success=scan_complete");
 exit;

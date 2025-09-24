@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 
 // Sanity check
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['script_pdf'])) {
@@ -67,5 +66,5 @@ $_SESSION['script_analysis'] = $data;
 $_SESSION['character_list'] = $characterList;
 
 // Redirect to master show creation form
-header("Location: ../../scripts/create_show_from_script.php");
+header("Location: /scripts/show/");
 exit;

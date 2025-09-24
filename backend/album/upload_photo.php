@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 
 $required_role = 'stage_crew';
 if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'teacher' && $_SESSION['role'] !== 'admin' && !in_array($required_role, $_SESSION['student_roles']))) {
@@ -41,7 +40,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
     if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
         $stmt = $pdo->prepare("INSERT INTO album_photos (filename, showid, uploaded_by) VALUES (?, ?, ?)");
         $stmt->execute([$filename, $show ?: null, $_SESSION['user_id']]);
-        header('Location: ../../album/album.php?success=1');
+        header('Location: /album/?success=1');
         exit;
     } else {
         die('Failed to save photo.');

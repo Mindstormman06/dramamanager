@@ -42,14 +42,14 @@ if ($id) {
 
         $pdo->commit();
 
-        header("Location: ../../shows/shows.php?success=deleted");
+        header("Location: /shows/?success=deleted");
         exit;
     } catch (Exception $e) {
         $pdo->rollBack();
-        header("Location: ../../shows/shows.php?error=linked");
+        header("Location: /shows/?error=linked");
         exit;
     }
 }
 
-header("Location: ../../shows/shows.php");
+header("Location: /shows/");
 exit;

@@ -1,10 +1,10 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
-    header('Location: ../index.php');
+    header('Location: /');
     exit;
 }
 

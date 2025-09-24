@@ -40,7 +40,7 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-semibold text-[#7B1E3B]">Production List</h2>
-      <a href="add_show.php" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded transition">+ Add Show</a>
+      <a href="/shows/add/" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded transition">+ Add Show</a>
     </div>
 
     <?php if (count($shows) === 0): ?>
@@ -64,7 +64,7 @@ $shows = $stmt->fetchAll(PDO::FETCH_ASSOC);
               </p>
             <?php endif; ?>
             <div class="flex gap-2 mt-4">
-              <a href="edit_show.php?id=<?= $show['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+              <a href="/shows/edit/?id=<?= $show['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
               <a href="../backend/shows/delete_show.php?id=<?= $show['id'] ?>" class="text-red-600 hover:underline"
                 onclick="return confirm('Are you sure you want to delete this show?');">Delete</a>
               <!-- <a href="../backend/scripts/scan_script.php?show_id=<?= $show['id'] ?>" 

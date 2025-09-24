@@ -4,7 +4,7 @@ include '../header.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
-    header("Location: shows.php");
+    header("Location: /shows/");
     exit;
 }
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $stmt = $pdo->prepare("UPDATE shows SET title = ?, year = ?, semester = ?, notes = ?, script_path = ? WHERE id = ?");
         $stmt->execute([$title, $year ?: null, $semester ?: null, $notes, $script_path, $id]);
-        header("Location: shows.php");
+        header("Location: /shows/");
         exit;
     }
 }
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow border space-y-4">
       <h2 class="text-2xl font-semibold mb-6">Edit Show</h2>
-      <a href="shows.php" class="text-blue-600 hover:underline mb-4">← Back to Show List</a>
+      <a href="/shows/" class="text-blue-600 hover:underline mb-4">← Back to Show List</a>
       <div>
         <label class="block font-medium mb-1" for="title">Show Title *</label>
         <input type="text" name="title" id="title" value="<?= htmlspecialchars($title) ?>" required
