@@ -372,6 +372,17 @@ switch ($routeParts[0]) {
         }
         break;
 
+    case 'admin':
+        if (file_exists('admin/site_settings.php')) {
+            $originalDir = getcwd();
+            include 'admin/site_settings.php';
+            chdir($originalDir);
+        } else {
+            http_response_code(404);
+            echo "404 - Page not found";
+        }
+        break;
+
     default:
         http_response_code(404);
         echo "Page not found: " . htmlspecialchars($route);

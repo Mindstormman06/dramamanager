@@ -2,12 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../log.php';
-include '../header.php'; // bring in $config, session, header/footer consistency
+include __DIR__ . '/../header.php';
 
 // Require admin
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    http_response_code(403);
-    die('Forbidden');
+    header('Location: /');
+    exit;
 }
 
 $configPath = __DIR__ . '/../backend/site_config.php';
