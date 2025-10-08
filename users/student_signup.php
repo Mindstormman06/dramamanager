@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
+$config = require '../backend/load_site_config.php';
 
 $error = '';
 $success = '';
@@ -70,14 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Student Signup | QSS Drama</title>
+  <title>Student Signup | <?=htmlspecialchars($config['site_title'])?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
   <link rel="manifest" href="/site.webmanifest">
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4 text-[#7B1E3B]">Student Signup</h1>
+    <h1 class="text-2xl font-bold mb-4 text-[<?= htmlspecialchars($config['text_colour']) ?>]">Student Signup</h1>
 
     <?php if ($error): ?>
       <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
@@ -86,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($success): ?>
       <!-- Success Message -->
       <p class="text-green-600 mb-4"><?= $success ?></p>
-      <a href="/login/" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="/login/" class="bg-blue-700 hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Go to Login</a>
     <?php else: ?>
       <!-- Signup Form -->
       <form method="POST" id="signup-form" class="space-y-4">
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="text" name="last_name" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div>
-          <label class="block font-semibold">Discord Username - This is NOT your display name <a style="color:#0000EE; text-decoration: underline;" href="../uploads/usernameexample.png" target="Discord Username Example">(Example)</a></label>
+          <label class="block font-semibold">Discord Username - This is NOT your display name <a style="color:#0000EE; text-decoration: underline;" href="/uploads/usernameexample.png" target="Discord Username Example">(Example)</a></label>
           <input type="text" name="discord_username" class="w-full border border-gray-300 rounded p-2" required>
         </div>
         <div>
@@ -114,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label class="block font-semibold">Teacher Code</label>
           <input type="text" name="teacher_code" class="w-full border border-gray-300 rounded p-2" required>
         </div>
-        <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Sign Up</button>
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Sign Up</button>
       </form>
     <?php endif; ?>
   </main>

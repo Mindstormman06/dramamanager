@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../backend/db.php';
+$config = require '../backend/load_site_config.php';
 
 $error = '';
 $success = '';
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Reset Password | QSS Drama</title>
+  <title>Reset Password | <?=htmlspecialchars($config['site_title'])?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
   <link rel="manifest" href="/site.webmanifest">
@@ -90,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
 
     <?php if ($success): ?>
       <p class="text-green-600 mb-4"><?= htmlspecialchars($success) ?></p>
-      <a href="/login/" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="/login/" class="bg-blue-700 hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Go to Login</a>
     <?php elseif ($step === 1): ?>
       <form method="POST" class="space-y-4">
         <div>

@@ -21,9 +21,16 @@ $sortColumn = match ($sort) {
 };
 
 function sortLink($label, $key, $currentSort) {
+    global $config;
     $base = 'text-blue-600 hover:underline';
-    $active = $key === $currentSort ? 'font-bold underline text-[#7B1E3B]' : $base;
-    return "<a href=\"?sort=$key\" class=\"$active\">$label</a>";
+    $textColour = htmlspecialchars($config['text_colour'] ?? '#000');
+    $textColourClass = "text-[$textColour]";
+    $active = $key === $currentSort ? "font-bold underline $textColourClass" : $base;
+
+    $labelEsc = htmlspecialchars($label);
+    $keyEsc = urlencode($key);
+
+    return "<a href=\"?sort={$keyEsc}\" class=\"{$active}\">{$labelEsc}</a>";
 }
 
 
@@ -48,16 +55,16 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Costumes | QSS Drama</title>
+  <title>Costumes | <?=htmlspecialchars($config['site_title'])?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-[#7B1E3B]">Costumes</h1>
+      <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">Costumes</h1>
       <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
-        <a href="/costumes/add/" class="bg-[#7B1E3B] text-white px-4 py-2 rounded shadow hover:bg-[#9B3454] transition">
+        <a href="/costumes/add/" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded shadow hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           + Add Costume
         </a>
       <?php endif; ?>
@@ -77,7 +84,7 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php if (count($costumes) === 0): ?>
       <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
       <div class="text-center py-10 text-gray-500 italic">
-        No costumes found. Click <strong class="text-[#7B1E3B]">“Add Costume”</strong> to get started!
+        No costumes found. Click <strong class="text-[<?= htmlspecialchars($config['text_colour']) ?>]">“Add Costume”</strong> to get started!
       </div>
       <?php else: ?>
         <div class="text-center py-2 text-gray-500 italic">
@@ -87,7 +94,7 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
       <div class="grid gap-4 md:grid-cols-2">
         <?php foreach ($costumes as $c): ?>
-          <div class="bg-white rounded-xl p-5 shadow-md border-l-4 border-[#7B1E3B] flex gap-4 hover:shadow-lg transition">
+          <div class="bg-white rounded-xl p-5 shadow-md border-l-4 border-[<?= $config['border_colour'] ?>] flex gap-4 hover:shadow-lg transition">
 
             <?php if (!empty($c['photo_url'])): ?>
               <img src="../<?= htmlspecialchars($c['photo_url']) ?>" alt="Photo of <?= htmlspecialchars($c['name']) ?>" class="w-24 h-24 object-cover rounded-lg">

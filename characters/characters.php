@@ -47,12 +47,12 @@ if (!$show_id):
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-xl mx-auto px-4 py-10">
-    <h1 class="text-2xl font-bold mb-6 text-[#7B1E3B]">👥 View Characters by Show</h1>
+    <h1 class="text-2xl font-bold mb-6 text-[<?= htmlspecialchars($config['text_colour']) ?>]">👥 View Characters by Show</h1>
 
     <form method="GET" action="/characters/" class="space-y-4">
       <label for="show_id" class="block text-sm font-medium">Select a Show:</label>
       <select name="show_id" id="show_id"
-              class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required>
+              class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required>
         <option value="">-- Select a Show --</option>
         <?php foreach ($allShows as $s): ?>
           <option value="<?= $s['id'] ?>">
@@ -61,7 +61,7 @@ if (!$show_id):
         <?php endforeach; ?>
       </select>
       <div class="flex justify-end">
-        <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           View Characters
         </button>
       </div>
@@ -89,15 +89,15 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Characters | QSS Drama</title>
+  <title>Characters | <?=htmlspecialchars($config['site_title'])?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-[#7B1E3B]">Characters</h1>
-      <a href="/characters/add/?show_id=<?= $show_id ?>" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
+      <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">Characters</h1>
+      <a href="/characters/add/?show_id=<?= $show_id ?>" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
         + Add Character
       </a>
     </div>
@@ -106,12 +106,12 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <form method="GET" class="flex items-center gap-2">
         <input type="hidden" name="show_id" value="<?= $show_id ?>">
         <label for="sort" class="text-sm font-medium text-gray-700">Sort by:</label>
-        <select name="sort" id="sort" class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+        <select name="sort" id="sort" class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
           <option value="alpha" <?= $sort === 'alpha' ? 'selected' : '' ?>>A–Z</option>
           <option value="lines" <?= $sort === 'lines' ? 'selected' : '' ?>>Line Count</option>
           <option value="mentions" <?= $sort === 'mentions' ? 'selected' : '' ?>>Mention Count</option>
         </select>
-        <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-1 rounded hover:bg-[#9B3454] transition">
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-1 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           Apply
         </button>
       </form>
@@ -122,7 +122,7 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
       <div class="grid gap-4">
         <?php foreach ($characters as $char): ?>
-          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-[#7B1E3B]">
+          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-[<?= $config['border_colour'] ?>]">
             <h3 class="text-xl font-bold"><?= htmlspecialchars($char['stage_name']) ?></h3>
             <?php if (!empty($char['real_name'])): ?>
               <p class="text-gray-700">Real Name: <?= htmlspecialchars($char['real_name']) ?></p>

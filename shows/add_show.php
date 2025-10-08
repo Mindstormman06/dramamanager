@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Add Show | QSS Drama</title>
+  <title>Add Show | <?=htmlspecialchars($config['site_title'])?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -81,18 +81,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1" for="title">Show Title *</label>
         <input type="text" name="title" id="title" value="<?= htmlspecialchars($title) ?>" required
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" />
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="year">Year (optional)</label>
         <input type="number" name="year" id="year" value="<?= htmlspecialchars($year) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" />
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="semester">Semester</label>
-        <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+        <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
           <option value="" <?= $semester === '' ? 'selected' : '' ?>>Select Semester</option>
           <option value="1" <?= $semester === '1' ? 'selected' : '' ?>>1</option>
           <option value="2" <?= $semester === '2' ? 'selected' : '' ?>>2</option>
@@ -102,17 +102,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1" for="notes">Notes (optional)</label>
         <textarea name="notes" id="notes" rows="4"
-                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]"><?= htmlspecialchars($notes) ?></textarea>
+                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]"><?= htmlspecialchars($notes) ?></textarea>
       </div>
 
       <div>
         <label class="block font-medium mb-1" for="script">Upload Script (PDF)</label>
         <input type="file" name="script" id="script" accept="application/pdf"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" />
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" />
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           Save Show
         </button>
       </div>

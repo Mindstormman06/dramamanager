@@ -22,7 +22,7 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-10">
     
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-        <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">📸 Photo Album</h1>
+        <h1 class="text-2xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">📸 Photo Album</h1>
 
         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles']))): ?>
         <form action="../backend/album/upload_photo.php" method="POST" enctype="multipart/form-data" class="mb-8 space-y-4" id="photoUploadForm">
@@ -34,20 +34,20 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <div>
                 <label class="block font-semibold">Assign to Show (optional)</label>
-                <select name="show" class="w-full border border-gray-300 rounded p-2">
+                <select name="show" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
                     <option value="">General Photo</option>
                     <?php foreach ($shows as $show): ?>
                         <option value="<?= htmlspecialchars($show) ?>"><?= htmlspecialchars($show) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Upload Photo</button>
+            <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Upload Photo</button>
         </form>
         <?php endif; ?>
 
         <form method="GET" class="mb-6">
             <label class="block font-semibold mb-1">Filter by Show:</label>
-            <select name="show" onchange="this.form.submit()" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+            <select name="show" onchange="this.form.submit()" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
                 <option value="">All Photos</option>
                 <?php foreach ($shows as $show): ?>
                     <option value="<?= htmlspecialchars($show) ?>" <?= $show === $showFilter ? 'selected' : '' ?>><?= htmlspecialchars($show) ?></option>
@@ -63,7 +63,7 @@ $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="relative rounded-xl shadow-md bg-white overflow-hidden border border-gray-200">
                     <img src="<?= htmlspecialchars($imgPath) ?>" alt="" class="w-full h-48 object-cover">
                     <div class="p-2 text-sm">
-                        <div class="font-semibold text-[#7B1E3B]"><?= htmlspecialchars($photo['showid'] ?? 'General') ?></div>
+                        <div class="font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>]"><?= htmlspecialchars($photo['showid'] ?? 'General') ?></div>
                         <div class="text-gray-500 text-xs"><?= date('M j, Y', strtotime($photo['uploaded_at'])) ?></div>
                         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles']))): ?>
                         <form method="POST" action="../backend/album/delete_photo.php" class="absolute bottom-2 right-2">

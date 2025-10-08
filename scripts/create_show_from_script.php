@@ -146,13 +146,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Show from Script | QSS Drama</title>
+  <title>Create Show from Script | <?=htmlspecialchars($config['site_title'])?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">🎭 Create Show from Script</h1>
+    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">🎭 Create Show from Script</h1>
 
     <?php if ($errors): ?>
       <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded mb-6">
@@ -169,18 +169,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
           <label for="title" class="block font-medium mb-1">Show Title *</label>
           <input type="text" name="title" id="title" value="<?= htmlspecialchars($title) ?>" required
-                 class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[#7B1E3B]" />
+                 class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" />
         </div>
 
         <div>
           <label for="year" class="block font-medium mb-1">Year</label>
           <input type="number" name="year" id="year" value="<?= htmlspecialchars($year) ?>"
-                 class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[#7B1E3B]" />
+                 class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" />
         </div>
 
         <div>
           <label for="semester" class="block font-medium mb-1">Semester</label>
-          <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[#7B1E3B]">
+          <select name="semester" id="semester" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
             <option value="" <?= $semester === '' ? 'selected' : '' ?>>Select Semester</option>
             <option value="1" <?= $semester === '1' ? 'selected' : '' ?>>1</option>
             <option value="2" <?= $semester === '2' ? 'selected' : '' ?>>2</option>
@@ -190,14 +190,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="sm:col-span-2">
           <label for="notes" class="block font-medium mb-1">Notes</label>
           <textarea name="notes" id="notes" rows="3"
-                    class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[#7B1E3B]"><?= htmlspecialchars($notes) ?></textarea>
+                    class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]"><?= htmlspecialchars($notes) ?></textarea>
         </div>
       </div>
 
       <h2 class="text-xl font-semibold mt-8 mb-2">🧍 Characters</h2>
       <div class="overflow-x-auto">
         <table class="w-full bg-white border rounded shadow text-sm">
-          <thead class="bg-[#7B1E3B] text-white">
+          <thead class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white">
             <tr>
               <th class="p-2 text-left">Stage Name</th>
               <th class="p-2 text-left">Real Name</th>
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="flex justify-end pt-4">
-        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           Save Show & Characters
         </button>
       </div>

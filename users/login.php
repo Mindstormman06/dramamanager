@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 require_once __DIR__ . '/../log.php';
+$config = require '../backend/load_site_config.php';
 
 if (isset($_SESSION['user_id'])) {
     header('Location: /');
@@ -70,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login | QSS Drama</title>
+  <title>Login | <?=htmlspecialchars($config['site_title'])?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
   <link rel="manifest" href="/site.webmanifest">
@@ -80,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
     <div class="flex items-center gap-3 pb-4">
         <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
-        <p class="text-2xl font-bold text-[#7B1E3B]">
-            QSS Drama
+        <p class="text-2xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">
+            <?=htmlspecialchars($config['site_title'])?>
         </a>
     </div>
 
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="remember" class="text-sm">Remember Me</label>
         </div>
 
-        <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Login</button>
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Login</button>
     </form>
 
     <!-- Signup Buttons -->

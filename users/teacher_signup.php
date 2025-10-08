@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
+$config = require '../backend/load_site_config.php';
 
 // Reset access code validation on page reload
 if (!isset($_POST['access_code_submit']) && !isset($_POST['signup_submit'])) {
@@ -72,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Teacher Signup | QSS Drama</title>
+  <title>Teacher Signup | <?=htmlspecialchars($config['site_title'])?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
   <link rel="manifest" href="/site.webmanifest">
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4 text-[#7B1E3B]">Teacher Signup</h1>
+    <h1 class="text-2xl font-bold mb-4 text-[<?= htmlspecialchars($config['text_colour']) ?>]">Teacher Signup</h1>
 
     <?php if ($error): ?>
       <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
@@ -88,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($success): ?>
       <!-- Success Message -->
       <p class="text-green-600 mb-4"><?= $success ?></p>
-      <a href="/login/" class="bg-blue-700 hover:bg-[#9B3454] text-white px-4 py-2 rounded">Go to Login</a>
+      <a href="/login/" class="bg-blue-700 hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Go to Login</a>
     <?php else: ?>
       <?php if (!isset($_SESSION['access_code_valid']) || !$_SESSION['access_code_valid']): ?>
         <!-- Access Code Form -->
@@ -97,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="block font-semibold">Access Code</label>
             <input type="text" name="access_code" class="w-full border-gray-300 rounded p-2 border" required>
           </div>
-          <button type="submit" name="access_code_submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Submit</button>
+          <button type="submit" name="access_code_submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Submit</button>
         </form>
       <?php else: ?>
         <!-- Signup Form -->
@@ -130,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="block font-semibold">Confirm Password</label>
             <input type="password" name="confirm_password" class="w-full border border-gray-300 rounded p-2" required>
           </div>
-          <button type="submit" name="signup_submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Sign Up</button>
+          <button type="submit" name="signup_submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Sign Up</button>
         </form>
       <?php endif; ?>
     <?php endif; ?>

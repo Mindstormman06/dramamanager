@@ -219,7 +219,7 @@ if (!empty($allStudentIds)) {
 
 <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-        <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">🎓 Class & Student Management</h1>
+        <h1 class="text-2xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">🎓 Class & Student Management</h1>
 
         <!-- Create Class -->
         <form method="POST" class="mb-8 flex gap-4 items-end">
@@ -227,7 +227,7 @@ if (!empty($allStudentIds)) {
                 <label class="block font-medium mb-1" for="class_name">New Class Name</label>
                 <input type="text" name="class_name" id="class_name" required class="border rounded px-3 py-2">
             </div>
-            <button type="submit" name="create_class" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454]">Create Class</button>
+            <button type="submit" name="create_class" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>]">Create Class</button>
         </form>
 
         <?php foreach ($classes as $class): ?>

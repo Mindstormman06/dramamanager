@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <main class="flex-1 w-full max-w-xl mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">🤖 Discord Bot Settings</h1>
+    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">🤖 Discord Bot Settings</h1>
     <?php if ($success): ?>
         <div class="mb-4 text-green-700 bg-green-100 rounded px-3 py-2">Settings updated! The bot will use the new values automatically.</div>
     <?php endif; ?>
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="block font-medium mb-1" for="schedule_channel">Schedule Message Channel ID</label>
             <input type="text" name="schedule_channel" id="schedule_channel" required
                    value="<?= htmlspecialchars($schedule_channel) ?>"
-                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
         </div>
         <div>
             <label class="flex items-center gap-2 mb-1">
@@ -74,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="block font-medium mb-1" for="changelog_channel">Changelog Message Channel ID</label>
             <input type="text" name="changelog_channel" id="changelog_channel" required
                    value="<?= htmlspecialchars($changelog_channel) ?>"
-                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
         </div>
-        <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454]">Save Settings</button>
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>]">Save Settings</button>
     </form>
 </main>
 <?php include '../footer.php'; ?>

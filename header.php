@@ -2,6 +2,7 @@
 require_once 'backend/db.php';
 require 'backend/users/auth.php';
 require_once 'log.php';
+$config = require __DIR__ . '/backend/load_site_config.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -12,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>QSS Drama Portal</title>
+  <title><?=htmlspecialchars($config['site_title'])?> Portal</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
@@ -42,27 +43,27 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 </head>
 
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col font-[Inter,sans-serif]">
-  <header class="w-full bg-css text-white py-4 shadow-md z-50">
+  <header class="w-full text-[<?= htmlspecialchars($config['header_text']) ?>] py-4 shadow-md z-50" style="background-color: <?= htmlspecialchars($config['header_bg_colour']) ?>;">
     <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
       
       <!-- Logo / Title -->
       <div class="flex items-center gap-3">
         <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
-        <a href="/" class="text-2xl font-bold hover:text-[#FFD166] transition-colors">
-          QSS Drama
+        <a href="/" class="text-2xl font-bold hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
+          <?= htmlspecialchars($config['site_title']) ?>
         </a>
       </div>
 
       <div class="relative flex items-center gap-4">
         <!-- Changelog Link -->
-        <a href="/changelog/" class="text-sm font-semibold hover:text-[#FFD166] transition-colors">
+        <a href="/changelog/" class="text-sm font-semibold hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
           📝 Changelog
         </a>
 
         <?php if (isset($_SESSION['user_id'])): ?>
           <!-- Username Dropdown -->
           <div class="relative">
-            <button id="dropdown-trigger" onclick="toggleDropdown()" class="text-sm font-semibold focus:outline-none hover:text-[#FFD166] transition-colors">
+            <button id="dropdown-trigger" onclick="toggleDropdown()" class="text-sm font-semibold focus:outline-none hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
               👤 <?= htmlspecialchars($_SESSION['username']) ?>
             </button>
             <div id="user-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-white text-gray-800 rounded shadow-lg hidden z-50 border border-gray-200">
@@ -83,7 +84,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
           </div>
         <?php else: ?>
           <!-- Login Button -->
-          <a href="/login/" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
+          <a href="/login/" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white text-sm font-semibold px-4 py-2 rounded shadow transition">
             Login
           </a>
         <?php endif; ?>

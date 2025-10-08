@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Edit Prop | QSS Drama</title>
+  <title>Edit Prop | <?=htmlspecialchars($config['site_title'])?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -133,13 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100 text-gray-800">
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">Edit Prop</h1>
+    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">Edit Prop</h1>
     <a href="/props/" class="text-blue-600 hover:underline mb-4">← Back to Prop List</a>
 
     <form action="" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
       <div>
         <label for="name" class="block font-medium mb-1">Name *</label>
-        <input type="text" name="name" id="name" value="<?= htmlspecialchars($prop['name']) ?>" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+        <input type="text" name="name" id="name" value="<?= htmlspecialchars($prop['name']) ?>" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
       </div>
 
       <div>
@@ -152,17 +152,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div>
         <label for="description" class="block font-medium mb-1">Description</label>
-        <textarea name="description" id="description" rows="3" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]"><?= htmlspecialchars($prop['description']) ?></textarea>
+        <textarea name="description" id="description" rows="3" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]"><?= htmlspecialchars($prop['description']) ?></textarea>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="location" class="block font-medium mb-1">Location</label>
-          <input type="text" name="location" id="location" value="<?= htmlspecialchars($prop['location']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+          <input type="text" name="location" id="location" value="<?= htmlspecialchars($prop['location']) ?>" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
         </div>
         <div>
           <label for="itemcondition" class="block font-medium mb-1">Condition</label>
-          <select name="itemcondition" id="itemcondition" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+          <select name="itemcondition" id="itemcondition" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
             <option value="A" <?= $prop['itemcondition'] === 'A' ? 'selected' : '' ?>>Excellent</option>
             <option value="B" <?= $prop['itemcondition'] === 'B' ? 'selected' : '' ?>>Good</option>
             <option value="C" <?= $prop['itemcondition'] === 'C' ? 'selected' : '' ?>>Fair</option>
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label for="category_id" class="block font-medium mb-1">Category</label>
         <div class="flex items-center gap-4">
-          <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+          <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
             <option value="">-- None --</option>
             <?php foreach ($categories as $cat): ?>
               <option value="<?= $cat['id'] ?>" <?= $cat['id'] == $prop['category_id'] ? 'selected' : '' ?>>
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </option>
             <?php endforeach; ?>
           </select>
-          <button type="button" onclick="openCategoryPopup()" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
+          <button type="button" onclick="openCategoryPopup()" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
             +Category
           </button>
         </div>
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div>
         <label class="block font-medium mb-1">Used in Shows</label>
         <div class="relative">
-          <select id="showDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]">
+          <select id="showDropdown" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
             <option value="">-- Select a Show --</option>
             <?php foreach ($shows as $show): ?>
               <?php if (!in_array($show['id'], $linked_show_ids)): ?>
@@ -257,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </script>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-[#7B1E3B] text-white px-6 py-2 rounded hover:bg-[#9B3454] transition">
+        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           Update Prop
         </button>
       </div>
@@ -269,12 +269,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div id="category-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded shadow-lg w-96">
       <h2 class="text-xl font-bold mb-4">Add New Category</h2>
-      <input type="text" id="new-category-name" placeholder="Category Name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B] mb-4">
+      <input type="text" id="new-category-name" placeholder="Category Name" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>] mb-4">
       <div class="flex justify-end gap-4">
         <button type="button" onclick="closeCategoryPopup()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
           Cancel
         </button>
-        <button type="button" onclick="addCategory()" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
+        <button type="button" onclick="addCategory()" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           Add Category
         </button>
       </div>

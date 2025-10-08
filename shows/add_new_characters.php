@@ -106,11 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-50 text-gray-800">
 <main class="max-w-6xl mx-auto px-4 py-10">
-  <h1 class="text-3xl font-bold mb-6 text-[#7B1E3B]">🎭 Add New Characters</h1>
+  <h1 class="text-3xl font-bold mb-6 text-[<?= htmlspecialchars($config['text_colour']) ?>]">🎭 Add New Characters</h1>
   <form method="POST" id="character-form" class="space-y-6">
     <div class="overflow-x-auto">
       <table class="w-full bg-white border rounded shadow text-sm">
-        <thead class="bg-[#7B1E3B] text-white">
+        <thead class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white">
           <tr>
             <th class="p-2 text-left">Add</th>
             <th class="p-2 text-left">Stage Name</th>
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="flex gap-4 mt-6">
       <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" onclick="ignoreAll()">Ignore All</button>
-      <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454]">Add Selected</button>
+      <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>]">Add Selected</button>
       <button type="button" class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600" onclick="addAll()">Add All</button>
     </div>
   </form>

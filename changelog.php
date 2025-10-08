@@ -78,7 +78,7 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-10">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-      <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">📝 Changelog</h1>
+      <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">📝 Changelog</h1>
 
       <?php if ($isAdmin): ?>
         <!-- Admin Form for Creating Changelog Posts -->
@@ -91,13 +91,13 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="hidden" name="action" value="create">
             <div>
               <label for="title" class="block font-semibold">Title</label>
-              <input type="text" name="title" id="title" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required>
+              <input type="text" name="title" id="title" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required>
             </div>
             <div>
               <label for="content" class="block font-semibold">Content (Markdown Supported)</label>
-              <textarea name="content" id="content" rows="6" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required></textarea>
+              <textarea name="content" id="content" rows="6" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required></textarea>
             </div>
-            <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Post</button>
+            <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Post</button>
           </form>
         </section>
       <?php endif; ?>
@@ -159,15 +159,15 @@ $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <input type="hidden" name="id" id="edit-id">
         <div>
           <label for="edit-title" class="block font-semibold">Title</label>
-          <input type="text" name="title" id="edit-title" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required>
+          <input type="text" name="title" id="edit-title" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required>
         </div>
         <div>
           <label for="edit-content" class="block font-semibold">Content</label>
-          <textarea name="content" id="edit-content" rows="6" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" required></textarea>
+          <textarea name="content" id="edit-content" rows="6" class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required></textarea>
         </div>
         <div class="flex justify-end gap-4">
           <button type="button" onclick="closeEditModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
-          <button type="submit" class="bg-[#7B1E3B] hover:bg-[#9B3454] text-white px-4 py-2 rounded">Save</button>
+          <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Save</button>
         </div>
       </form>
     </div>

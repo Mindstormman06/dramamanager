@@ -151,12 +151,12 @@ if ($isStudent) {
 ?>
 
 <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold text-[#7B1E3B] mb-6">📅 Rehearsal Schedule</h1>
+    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">📅 Rehearsal Schedule</h1>
 
     <?php if ($isStudent): ?>
     <!-- Settings Button -->
     <div class="flex justify-end mb-6">
-        <button onclick="openSettings()" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454] transition">
+        <button onclick="openSettings()" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
             ⚙️ Settings
         </button>
     </div>
@@ -191,7 +191,7 @@ if ($isStudent) {
                 </div>
                 <p class="text-xs text-gray-500 mt-1">Tap to select one or more students.</p>
             </div>
-            <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454]">Add Rehearsal</button>
+            <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>]">Add Rehearsal</button>
         </form>
     </div>
     <?php endif; ?>
@@ -246,9 +246,9 @@ if ($isStudent) {
                 <label for="discord_username" class="block font-medium mb-1">Discord Username (NOT Display Name)</label>
                 <input type="text" name="discord_username" id="discord_username"
                     value="<?= htmlspecialchars($currentDiscordUsername) ?>"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7B1E3B]" maxlength="37" />
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" maxlength="37" />
             </div>
-            <button type="submit" class="bg-[#7B1E3B] text-white px-4 py-2 rounded hover:bg-[#9B3454]">Save</button>
+            <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>]">Save</button>
         </form>
     </div>
 </div>
