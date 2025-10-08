@@ -5,31 +5,6 @@ require_once 'log.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    $token = $_COOKIE['remember_token'];
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ?");
-    $stmt->execute([$token]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    $stmt = $pdo->prepare("SELECT * FROM students WHERE username = ?");
-    $stmt->execute([$user['username']]);
-    $student = $stmt->fetch(PDO::FETCH_ASSOC);
-    $stmt = $pdo->prepare("
-        SELECT r.name 
-        FROM student_roles sr
-        JOIN roles r ON sr.role_id = r.id
-        WHERE sr.student_id = ?
-    ");
-    $stmt->execute([$student['id']]);
-    $roles = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-    if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['student_roles'] = $roles ?? null;
-    }
-}
 ?>
 
 
