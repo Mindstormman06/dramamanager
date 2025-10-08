@@ -80,6 +80,7 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ├── changelog.php             # Changelog Page
 ├── mascot.php                # Shows the page mascot
 ├── router.php                # URL routes for the site
+├── log.php                   # Log function
 └── README.md                 # Project documentation
 ```
 
