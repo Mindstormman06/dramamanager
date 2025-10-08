@@ -79,6 +79,8 @@ if ($isTeacher && $_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_exec($ch);
     curl_close($ch);
 
+    log_event("Rehearsal '$title' (ID: $rehearsalId) added by user '{$_SESSION['username']}'", 'INFO');
+
     header("Location: /schedule/");
     exit;
 }

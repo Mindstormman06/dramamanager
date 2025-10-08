@@ -10,6 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($quote !== '') {
         $stmt = $pdo->prepare("INSERT INTO ideas (quote, author) VALUES (?, ?)");
         $stmt->execute([$quote, $author]);
+
+        $ideaId = $pdo->lastInsertId();
+
+        $short = substr($quote, 0, 30);
+        if (strlen($quote) > 30) $short .= '...';
+
+        log_event("Idea '{$short}' added (ID: {$ideaId}) by '{$_SESSION['username']}'", 'INFO');
     }
 }
 

@@ -1,6 +1,7 @@
 <?php
 require_once 'backend/db.php';
 require 'backend/users/auth.php';
+require_once 'log.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -96,7 +97,7 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
                     <a href="/link/" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
                   </li>
                   <li>
-                    <a href="/info/linked/" class="block px-4 py-2 hover:bg-gray-100">View Linked Teachers & Students</a>
+                    <a href="/info/linked/" class="block px-4 py-2 hover:bg-gray-100">Class Management</a>
                   </li>
                 <?php endif; ?>
                 <li>

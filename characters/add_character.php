@@ -96,11 +96,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO characters (stage_name, real_name, show_id) VALUES (?, ?, ?)");
         $stmt->execute([$stage_name, $real_name ?: null, $show_id]);
         $characterId = $pdo->lastInsertId();
+        $stmt = $pdo->prepare("SELECT title FROM shows WHERE id = ?");
+        $stmt->execute([$show_id]);
+        $show = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // If a student is selected, link the character to the student
         if ($student_id && $student_id !== 'manual') {
             $stmt = $pdo->prepare("INSERT INTO studentcharacters (character_id, student_id) VALUES (?, ?)");
             $stmt->execute([$characterId, $student_id]);
+            log_event("Character '$stage_name' (ID: $characterId) ($real_name) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
+        } else if ($student_id === 'manual' && !empty($real_name)) {
+            log_event("Character '$stage_name' (ID: $characterId) ($real_name) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
+        } else {
+            log_event("Character '$stage_name' (ID: $characterId) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
         }
 
         // Redirect back to the characters page for the selected show

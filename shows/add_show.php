@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO shows (title, year, semester, notes, script_path) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$title, $year ?: null, $semester ?: null, $notes, $script_path]);
+        log_event("Show '$title' (ID: " . $pdo->lastInsertId() . ") added by user '{$_SESSION['username']}'");
         header("Location: /shows/");
         exit;
     }

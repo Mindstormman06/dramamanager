@@ -90,6 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    log_event("Costume '$name' (ID: $id) updated by user '{$_SESSION['username']}'", 'INFO');
+
     header("Location: /costumes/");
     exit;
 }
@@ -118,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       // Send AJAX request to add the category
-      fetch('../backend/costumes/add_category.php', {
+      fetch('/backend/costumes/add_category.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: categoryName })

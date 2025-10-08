@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/backend/db.php';
 require_once __DIR__ . '/vendor/autoload.php';
+include 'header.php'; 
 $parsedown = new Parsedown();
 
 if (session_status() === PHP_SESSION_NONE) session_start();
@@ -21,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } else {
             $stmt = $pdo->prepare("INSERT INTO changelog (title, content) VALUES (?, ?)");
             $stmt->execute([$title, $content]);
+            log_event("Changelog post '$title' created by user '{$_SESSION['username']}'");
 
             // Send to Discord bot
             $botUrl = 'http://10.0.0.47:3079/changelog'; // or your bot server's address
@@ -49,13 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } else {
             $stmt = $pdo->prepare("UPDATE changelog SET title = ?, content = ? WHERE id = ?");
             $stmt->execute([$title, $content, $id]);
+            log_event("Changelog post '$title' edited by user '{$_SESSION['username']}'");
             header('Location: /changelog/');
             exit;
         }
     } elseif ($action === 'delete' && $isAdmin) {
         $id = intval($_POST['id']);
+        $stmt = $pdo->prepare("SELECT title FROM changelog WHERE id = ?");
+        $stmt->execute([$id]);
+        $title = $stmt->fetchColumn();
         $stmt = $pdo->prepare("DELETE FROM changelog WHERE id = ?");
         $stmt->execute([$id]);
+        log_event("Changelog post '$title' deleted by user '{$_SESSION['username']}'");
         header('Location: /changelog/');
         exit;
     }
@@ -66,7 +73,6 @@ $stmt = $pdo->query("SELECT * FROM changelog ORDER BY created_at DESC");
 $changelogPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<?php include 'header.php'; ?>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
   
 

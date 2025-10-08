@@ -45,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare("INSERT INTO teacher_links (lead_teacher_id, linked_teacher_id) VALUES (?, ?)");
                     $stmt->execute([$leadTeacherId, $linkedTeacher['id']]);
 
+                    log_event("Teacher '$linkedTeacherUsername' linked to '$loggedInUsername'");
+
                     $success = 'Teacher linked successfully!';
                 }
             }

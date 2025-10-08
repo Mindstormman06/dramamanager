@@ -1,5 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+include __DIR__ . '/../../log.php';
 
 
 $required_role = 'stage_crew';
@@ -20,6 +21,7 @@ if ($id && $filename) {
     $stmt->execute([$id]);
     $filePath = __DIR__ . '/../../uploads/photos/' . $showDir . '/' . $filename;
     if (file_exists($filePath)) unlink($filePath);
+    log_event("Photo '$filename' (ID: $id) deleted by '{$_SESSION['username']}'");
 }
 header('Location: /album/');
 exit;

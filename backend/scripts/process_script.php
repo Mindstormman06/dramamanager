@@ -1,15 +1,14 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+include '../../log.php';
 
-// Sanity check
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['script_pdf'])) {
     die("Invalid request.");
 }
 
 require_once '../../backend/db.php';
 
-// Handle PDF upload
 $uploadDir = __DIR__ . "/../../uploads/";
 $uploadedFile = $_FILES['script_pdf'];
 $ext = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
@@ -27,6 +26,8 @@ if (!move_uploaded_file($uploadedFile['tmp_name'], $targetPath)) {
 
 // Store the uploaded script path in the session
 $_SESSION['uploaded_script_path'] = '../uploads/' . $tempName;
+
+log_event("User '{$_SESSION['username']}' uploaded a script.", 'INFO');
 
 // Get character list (manual or auto-detect)
 $characterList = trim($_POST['character_list'] ?? '');

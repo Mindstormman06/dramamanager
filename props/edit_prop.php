@@ -72,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$sid, $prop_id]);
     }
 
+    log_event("Prop '$name' (ID: $prop_id) updated by user '{$_SESSION['username']}'", 'INFO');
+
     header("Location: /props/");
     exit;
 }
@@ -100,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       // Send AJAX request to add the category
-      fetch('../backend/props/add_category.php', {
+      fetch('/backend/props/add_category.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: categoryName })

@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
+include '../header.php'; 
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
     header('Location: /login/');
@@ -23,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class'])) {
         $stmt = $pdo->prepare("INSERT INTO classes (name, teacher_id) VALUES (?, ?)");
         $stmt->execute([$className, $teacherId]);
     }
+
+    log_event("Class '$className' created by user '{$_SESSION['username']}'");
+
     header("Location: /info/linked/");
     exit;
 }
@@ -31,6 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
     $studentUsername = trim($_POST['student_username']);
     $classId = intval($_POST['class_id']);
+    // Get class name (use fetchColumn to get the scalar)
+    $stmt = $pdo->prepare("SELECT name FROM classes WHERE id = ?");
+    $stmt->execute([$classId]);
+    $className = $stmt->fetchColumn();
+
     // Find student
     $stmt = $pdo->prepare("SELECT id FROM students WHERE username = ?");
     $stmt->execute([$studentUsername]);
@@ -39,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
         // Add to class_students if not already present
         $stmt = $pdo->prepare("INSERT IGNORE INTO class_students (class_id, student_id) VALUES (?, ?)");
         $stmt->execute([$classId, $student['id']]);
+        log_event("Student '$studentUsername' added to class '$className' by user '{$_SESSION['username']}'");
     }
     header("Location: /info/linked/");
     exit;
@@ -47,14 +57,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
 // Handle removing student from class
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_from_class'])) {
     $classStudentId = intval($_POST['class_student_id']);
+
+    // Get class name (and optionally the student username) before deleting
+    $stmt = $pdo->prepare("
+        SELECT c.name AS class_name, s.username AS student_username
+        FROM class_students cs
+        JOIN classes c ON cs.class_id = c.id
+        JOIN students s ON cs.student_id = s.id
+        WHERE cs.id = ?
+    ");
+    $stmt->execute([$classStudentId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $className = $row['class_name'] ?? '';
+    $studentUsername = $row['student_username'] ?? '';
+
     $stmt = $pdo->prepare("DELETE FROM class_students WHERE id = ?");
     $stmt->execute([$classStudentId]);
+
+    log_event("Student '{$studentUsername}' removed from class '{$className}' by user '{$_SESSION['username']}'");
     header("Location: /info/linked/");
     exit;
 }
 
 // Handle role assignment/removal
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_roles'])) {
+    $stmt = $pdo->prepare("SELECT username FROM students WHERE id = ?");
+    $stmt->execute([intval($_POST['student_id'])]);
+    $studentUsername = $stmt->fetchColumn();
     $studentId = intval($_POST['student_id']);
     $selectedRoles = isset($_POST['roles']) ? $_POST['roles'] : [];
 
@@ -68,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_roles'])) {
         foreach ($selectedRoles as $roleId) {
             $stmt->execute([$studentId, intval($roleId)]);
         }
+        log_event("Roles updated for student '$studentUsername' by user '{$_SESSION['username']}'");
     }
     header("Location: /info/linked/");
     exit;
@@ -88,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student'])) {
         $stmt->execute([$studentId]);
         $stmt = $pdo->prepare("DELETE FROM users WHERE username = ?");
         $stmt->execute([$username]);
+        log_event("Student '$username' deleted by user '{$_SESSION['username']}'");
     }
 
     // Also remove from all student_roles and class_students (handled by ON DELETE CASCADE if set)
@@ -106,6 +137,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_password_rese
         $stmt = $pdo->prepare("UPDATE users SET reset_requested = 1 WHERE username = ?");
         $stmt->execute([$row['username']]);
     }
+    log_event("Password reset requested for student '{$row['username']}' by user '{$_SESSION['username']}'");
+    header("Location: /info/linked/");
+    exit;
+}
+
+// Handle deleting a class (teacher-owned) and unlinking its students
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_class'])) {
+    $classId = intval($_POST['class_id']);
+
+    // Verify the class belongs to this teacher
+    $stmt = $pdo->prepare("SELECT name FROM classes WHERE id = ? AND teacher_id = ?");
+    $stmt->execute([$classId, $teacherId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row) {
+        $className = $row['name'];
+
+        // Unlink all students from this class
+        $stmt = $pdo->prepare("DELETE FROM class_students WHERE class_id = ?");
+        $stmt->execute([$classId]);
+
+        // Delete the class itself
+        $stmt = $pdo->prepare("DELETE FROM classes WHERE id = ?");
+        $stmt->execute([$classId]);
+
+        log_event("Class '{$className}' (ID: {$classId}) deleted by user '{$_SESSION['username']}'", 'INFO');
+    }
+
     header("Location: /info/linked/");
     exit;
 }
@@ -158,8 +217,6 @@ if (!empty($allStudentIds)) {
 }
 ?>
 
-<?php include '../header.php'; ?>
-
 <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
         <h1 class="text-2xl font-bold text-[#7B1E3B] mb-6">🎓 Class & Student Management</h1>
@@ -175,7 +232,13 @@ if (!empty($allStudentIds)) {
 
         <?php foreach ($classes as $class): ?>
             <div class="mb-10">
-                <h2 class="text-xl font-semibold text-gray-700 mb-2"><?= htmlspecialchars($class['name']) ?></h2>
+                <h2 class="text-xl font-semibold text-gray-700 mb-2 flex items-center justify-between">
+                    <span><?= htmlspecialchars($class['name']) ?></span>
+                    <form method="POST" onsubmit="return confirm('Delete class <?= htmlspecialchars($class['name']) ?> and unlink all students? This cannot be undone.');" style="display:inline">
+                        <input type="hidden" name="class_id" value="<?= $class['id'] ?>">
+                        <button type="submit" name="delete_class" class="bg-red-600 text-white px-2 py-1 rounded text-sm hover:bg-red-700">Delete Class</button>
+                    </form>
+                </h2>
 
                 <!-- Add Student to Class -->
                 <form method="POST" class="mb-4 flex gap-4 items-end" autocomplete="off">

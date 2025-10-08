@@ -121,12 +121,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $counts['mentions'],
                 $counts['lines']
             ]);
+
+            if (isset($realName)) {
+              $logRealName = "($realName)";
+            }
+
+            log_event("Character '$formattedStageName' $logRealName added to show $title (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
         }
 
         // Clear session data
         unset($_SESSION['script_analysis']);
         unset($_SESSION['character_list']);
         unset($_SESSION['uploaded_script_path']);
+
+        log_event("Show '$title' (ID: $show_id) added by user '{$_SESSION['username']}'", 'INFO');
+
 
         header("Location: /shows/");
         exit;

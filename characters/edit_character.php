@@ -109,6 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE characters SET stage_name = ?, real_name = ? WHERE id = ?");
         $stmt->execute([$stage_name, $real_name ?: null, $id]);
 
+        // Log the update
+        log_event("Character '{$stage_name}' (ID: {$id}) updated by user '{$_SESSION['username']}'", 'INFO');
+
         // Update the student link
         if ($student_id && $student_id !== 'manual') {
             // Fetch the student's full name
@@ -132,12 +135,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Insert the new link if it doesn't exist
                     $stmt = $pdo->prepare("INSERT INTO studentcharacters (character_id, student_id) VALUES (?, ?)");
                     $stmt->execute([$id, $student_id]);
+
+                    // Log the new link
+                    log_event("Character '{$stage_name}' (ID: {$id}) linked to student '{$real_name}' (ID: {$student_id}) by user '{$_SESSION['username']}'", 'INFO');
                 }
             }
         } else {
             // If manual input, remove any existing link in the studentcharacters table
             $stmt = $pdo->prepare("DELETE FROM studentcharacters WHERE character_id = ?");
             $stmt->execute([$id]);
+
+            // Log unlink / manual change
+            log_event("Character '{$stage_name}' (ID: {$id}) unlinked from any student and set manual real name '" . ($real_name ?: '') . "' by user '{$_SESSION['username']}'", 'INFO');
         }
 
         // Redirect back to the characters page for the selected show

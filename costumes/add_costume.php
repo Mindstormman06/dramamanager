@@ -62,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    log_event("Costume '$name' (ID: $costume_id) added by user '{$_SESSION['username']}'", 'INFO');
+
     header("Location: /costumes/");
     exit;
 }
@@ -95,7 +97,7 @@ $characters = $pdo->query("SELECT id, stage_name FROM characters ORDER BY stage_
       }
 
       // Send AJAX request to add the category
-      fetch('../backend/costumes/add_category.php', {
+      fetch('/backend/costumes/add_category.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: categoryName })

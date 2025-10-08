@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
+include __DIR__ . '/../../log.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -8,7 +9,7 @@ if ($id) {
         $pdo->beginTransaction();
 
         // Fetch the script path for the show
-        $scriptStmt = $pdo->prepare("SELECT script_path FROM shows WHERE id = ?");
+        $scriptStmt = $pdo->prepare("SELECT script_path, title FROM shows WHERE id = ?");
         $scriptStmt->execute([$id]);
         $show = $scriptStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -41,6 +42,8 @@ if ($id) {
         $showStmt->execute([$id]);
 
         $pdo->commit();
+
+        log_event("Show '{$show['title']}' (ID: $id) deleted by user '{$_SESSION['username']}'", 'INFO');
 
         header("Location: /shows/?success=deleted");
         exit;

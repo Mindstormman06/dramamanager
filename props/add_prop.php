@@ -49,6 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    log_event("Prop '$name' (ID: $prop_id) added by user '{$_SESSION['username']}'", 'INFO');
+
     header("Location: /props/");
     exit;
 }
@@ -81,7 +83,7 @@ $shows = $pdo->query("SELECT id, title, semester, year FROM shows ORDER BY year 
       }
 
       // Send AJAX request to add the category
-      fetch('../backend/props/add_category.php', {
+      fetch('/backend/props/add_category.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: categoryName })

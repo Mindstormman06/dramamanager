@@ -45,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'CHANGELOG_CHANNEL_ID' => $changelog_channel
     ]);
     $success = true;
+
+    log_event("Discord bot settings updated by user '{$_SESSION['username']}'");
 }
 ?>
 

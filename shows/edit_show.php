@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $stmt = $pdo->prepare("UPDATE shows SET title = ?, year = ?, semester = ?, notes = ?, script_path = ? WHERE id = ?");
         $stmt->execute([$title, $year ?: null, $semester ?: null, $notes, $script_path, $id]);
+        log_event("Show '$title' (ID: $id) updated by user '{$_SESSION['username']}'");
         header("Location: /shows/");
         exit;
     }

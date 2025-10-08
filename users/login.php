@@ -1,6 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
+require_once __DIR__ . '/../log.php';
 
 if (isset($_SESSION['user_id'])) {
     header('Location: /');
@@ -40,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['student_roles'] = $roles ?? null;
+
+            log_event("User '{$user['username']}' logged in.", 'INFO');
         
             if (!empty($_POST['remember'])) {
                 // Generate a random token

@@ -1,5 +1,10 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+if ($_SESSION['role'] != 'teacher' && $_SESSION['role'] != 'admin' && !in_array('costumes', $_SESSION['student_roles'])) die('You are not authorized to access this page.');
+
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../../log.php';
 
 if (!isset($_GET['id'])) {
     die("Missing costume ID.");
@@ -8,7 +13,7 @@ if (!isset($_GET['id'])) {
 $costume_id = intval($_GET['id']);
 
 // Optionally delete the image file
-$stmt = $pdo->prepare("SELECT photo_url FROM costumes WHERE id = ?");
+$stmt = $pdo->prepare("SELECT photo_url, name FROM costumes WHERE id = ?");
 $stmt->execute([$costume_id]);
 $costume = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -24,6 +29,8 @@ $pdo->prepare("DELETE FROM showcostumes WHERE costume_id = ?")->execute([$costum
 
 // Delete from costumes
 $pdo->prepare("DELETE FROM costumes WHERE id = ?")->execute([$costume_id]);
+
+log_event("Costume '{$costume['name']}' (ID: $costume_id) deleted by user '{$_SESSION['username']}'", 'INFO');
 
 header("Location: /costumes/");
 exit;
