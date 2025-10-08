@@ -1,5 +1,5 @@
 uploads/
 bot/discord-rehearsal-bot/.env
-backend/db.php
 logs/
 backend/site_config.php
+backend/db_config.php
