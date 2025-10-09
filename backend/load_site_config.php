@@ -31,7 +31,7 @@ if (!file_exists($siteConfigFile)) {
     $tmp = $siteConfigFile . '.tmp';
     if (@file_put_contents($tmp, $php, LOCK_EX) !== false) {
         @rename($tmp, $siteConfigFile);
-        @chmod($siteConfigFile, 0644);
+        @chmod($siteConfigFile, 0777);
     } else {
         // Can't write: fall back to defaults in-memory
         return $defaults;
