@@ -29,7 +29,7 @@ RUN chmod 644 /docker-entrypoint-initdb.d/dramamanager.sql
 COPY . /var/www/html/
 RUN find /var/www/html -type f -name "*.php" -exec dos2unix {} \;
 
-RUN chmod -R 755 /var/www/html
+
 
 # Install Node dependencies for Discord bot
 WORKDIR /var/www/html/bot/discord-rehearsal-bot
@@ -39,9 +39,8 @@ RUN npm install
 COPY docker-entrypoint.sh /var/www/html/docker-entrypoint.sh
 RUN chmod +x /var/www/html/docker-entrypoint.sh
 
-# Set permissions for uploads and logs
-RUN chown -R www-data:www-data /var/www/html/uploads /var/www/html/logs \
-    && chmod -R 775 /var/www/html/uploads /var/www/html/logs
+# Set Permissions
+RUN chmod -R 755 /var/www/html
 
 # Expose port 8079
 EXPOSE 8079
