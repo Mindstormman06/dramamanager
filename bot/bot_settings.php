@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher' && $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: /');
     exit;
 }
