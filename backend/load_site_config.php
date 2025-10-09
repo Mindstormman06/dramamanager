@@ -16,6 +16,7 @@ $defaults = [
     'enable_mascot' => false,
     'footer_bg_colour' => '#254678',
     'footer_text' => '#8a8a8a',
+    'admin_creation_key' => 'changeme',
 ];
 
 if (!file_exists($siteConfigFile)) {
