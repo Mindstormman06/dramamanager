@@ -1,7 +1,7 @@
 uploads/*
 !uploads/logo.png
 bot/discord-rehearsal-bot/.env
-
+logs/*
 backend/site_config.php
 backend/db_config.php
 docker-compose.yml
