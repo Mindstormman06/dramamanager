@@ -40,7 +40,7 @@ COPY docker-entrypoint.sh /var/www/html/docker-entrypoint.sh
 RUN chmod +x /var/www/html/docker-entrypoint.sh
 
 # Set Permissions
-RUN chmod -R 755 /var/www/html
+RUN chmod -R 777 /var/www/html
 
 # Expose port 8079
 EXPOSE 8079
