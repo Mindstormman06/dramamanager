@@ -1,6 +1,6 @@
-# QSS Drama Manager 🎭
+# Drama Manager 🎭
 
-The QSS Drama Manager is a web-based application designed to streamline the management of drama productions. It provides tools for organizing shows, characters, props, costumes, scripts, and more, making it easier for teachers, students, and administrators to collaborate effectively.
+The Drama Manager is a web-based application designed to streamline the management of drama productions. It provides tools for organizing shows, characters, props, costumes, scripts, and more, making it easier for teachers, students, and administrators to collaborate effectively.
 
 ---
 
@@ -51,6 +51,8 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 ```
 ├── backend/
 │   ├── db.php                # Database connection
+│   ├── load_db_config.php    # Database config
+│   ├── load_site_config.php  # Site config
 │   ├── album/                # Backend logic for photo album
 │   ├── characters/           # Backend logic for characters
 │   ├── costumes/             # Backend logic for costumes
@@ -61,11 +63,13 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
 │   ├── scripts/              # Python and PHP scripts for script analysis
 │   ├── shows/                # Backend logic for shows
 │   └── users/                # Backend logic for user management
+├── admin/                    # Site settings
 ├── album/                    # Photo album page
 ├── bot/                      # Discord bot settings and JS
 ├── characters/               # Character management pages
 ├── costumes/                 # Costume management pages
 ├── ideas/                    # Ideas planner pages
+├── logs/                     # Site logs
 ├── props/                    # Prop management pages
 ├── schedule/                 # Rehearsal scheduling page
 ├── scripts/                  # Script analysis and show creation pages
@@ -101,15 +105,15 @@ The QSS Drama Manager is a web-based application designed to streamline the mana
    ```
 2. Import the database:
    - Use the `qssdrama79.sql` file to set up the database schema and initial data.
-3. Configure the database connection:
-   - Update the `backend/db.php` file with your database credentials.
-4. Set up file permissions:
+3. Set up file permissions:
    - Ensure the `uploads/` directory is writable by the web server.
-5. Install Python dependencies:
+4. Install Python dependencies:
    ```bash
    pip install pymupdf
    ```
-6. Start your web server and access the application via `http://localhost/<project-folder>`.
+5. Start your web server and access the application via `http://localhost/<project-folder>`.
+6. Configure the database connection:
+   - After accessing the site once, update the `backend/db_config.php` file with your database credentials.
 
 ---
 
