@@ -2,7 +2,7 @@
 set -e
 
 # Always overwrite db_config.php
-DB_CONFIG_FILE=/var/www/html/backend/db_config.php
+DB_CONFIG_FILE=/var/www/html/backend/config/db_config.php
 cat > "$DB_CONFIG_FILE" <<EOL
 <?php
 return array (

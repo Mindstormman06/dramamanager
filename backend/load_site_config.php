@@ -1,7 +1,7 @@
 <?php
 // Return existing config, creating site_config.php with defaults if missing.
 
-$siteConfigFile = __DIR__ . '/site_config.php';
+$siteConfigFile = __DIR__ . '/config/site_config.php';
 
 $defaults = [
     'site_title' => 'Drama Manager',

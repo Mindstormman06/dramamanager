@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
     exit;
 }
 
-$configPath = __DIR__ . '/../backend/site_config.php';
+$configPath = __DIR__ . '/../backend/config/site_config.php';
 $config = file_exists($configPath) ? (require $configPath) : [];
 
 // Allowed keys and simple validators

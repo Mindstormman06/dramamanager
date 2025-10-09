@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/backend/site_config.php';
+include __DIR__ . '/backend/config/site_config.php';
 ?>
 <footer class="w-full text-[<?= htmlspecialchars($config['footer_text']) ?>] py-6" style="background-color: <?= htmlspecialchars($config['footer_bg_colour']) ?>;">
   <div class="max-w-6xl mx-auto px-4 text-center">

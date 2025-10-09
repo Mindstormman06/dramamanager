@@ -1,5 +1,5 @@
 <?php
-$dbConfigFile = __DIR__ . '/db_config.php';
+$dbConfigFile = __DIR__ . '/config/db_config.php';
 
 $defaults = [
     'host' => 'localhost',
