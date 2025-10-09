@@ -22,6 +22,8 @@ COPY docker/apache/drama.conf /etc/apache2/sites-available/drama.conf
 RUN a2ensite drama.conf && a2dissite 000-default.conf
 
 COPY dramamanager.sql /docker-entrypoint-initdb.d/dramamanager.sql
+RUN chmod 644 /docker-entrypoint-initdb.d/dramamanager.sql
+
 
 # Copy app files
 COPY . /var/www/html/
