@@ -101,7 +101,7 @@ The Drama Manager is a web-based application designed to streamline the manageme
 ### Steps
 1. Clone the repository to your local machine:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Mindstormman06/dramamanager.git
    ```
 2. Import the database:
    - Use the `dramamanager.sql` file to set up the database schema and initial data.
