@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+chown -R www-data:www-data /var/www/html/backend/config
+echo "Ensured ownership of backend/config"
+ls -ld /var/www/html/backend/config
+
 # Always overwrite db_config.php
 DB_CONFIG_FILE=/var/www/html/backend/config/db_config.php
 cat > "$DB_CONFIG_FILE" <<EOL
