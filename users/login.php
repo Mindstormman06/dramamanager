@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-100 text-gray-800">
   <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
     <div class="flex items-center gap-3 pb-4">
-        <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/"><img src="/assets/logo.png" alt="QSS Logo" class="h-10" /></a>
         <p class="text-2xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">
             <?=htmlspecialchars($config['site_title'])?>
         </a>

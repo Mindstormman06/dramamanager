@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $errors[] = 'Logo must be a valid image (jpg, png, gif, webp).';
                 } else {
                     $ext = $allowedMime[$info['mime']];
-                    $uploadDir = __DIR__ . '/../uploads/';
+                    $uploadDir = __DIR__ . '/../assets/';
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                     $dest = $uploadDir . 'logo.' . $ext;
                     if (!move_uploaded_file($tmp, $dest)) {
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             // replace canonical (remove old if exists)
                             if (file_exists($canonical)) @unlink($canonical);
                             rename($dest, $canonical);
-                            $newConfig['uploaded_logo'] = '/uploads/logo.png';
+                            $newConfig['uploaded_logo'] = '/assets/logo.png';
                         } else {
                             // try GD conversion
                             $converted = false;
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 }
                             }
                             if ($converted) {
-                                $newConfig['uploaded_logo'] = '/uploads/logo.png';
+                                $newConfig['uploaded_logo'] = '/assets/logo.png';
                             } else {
                                 // fallback: keep original uploaded file path
                                 $fallbackName = $uploadDir . 'logo.' . $ext;
@@ -150,8 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Prepare logo URL for display: prefer canonical /uploads/logo.png else config uploaded_logo
-$logoUrl = '/uploads/logo.png';
-$canonicalPath = __DIR__ . '/../uploads/logo.png';
+$logoUrl = '/assets/logo.png';
+$canonicalPath = __DIR__ . '/../assets/logo.png';
 if (!file_exists($canonicalPath) && !empty($config['uploaded_logo'])) {
     $logoUrl = $config['uploaded_logo'];
 }

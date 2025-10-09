@@ -48,7 +48,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
       
       <!-- Logo / Title -->
       <div class="flex items-center gap-3">
-        <a href="/"><img src="/uploads/logo.png" alt="QSS Logo" class="h-10" /></a>
+        <a href="/"><img src="/assets/logo.png" alt="QSS Logo" class="h-10" /></a>
         <a href="/" class="text-2xl font-bold hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
           <?= htmlspecialchars($config['site_title']) ?>
         </a>
