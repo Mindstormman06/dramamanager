@@ -3,7 +3,7 @@ $dbConfigFile = __DIR__ . '/db_config.php';
 
 $defaults = [
     'host' => 'localhost',
-    'db'   => 'qssdrama79',
+    'db'   => 'dramamanager',
     'user' => 'root',
     'pass' => '',
     'charset' => 'utf8mb4',
