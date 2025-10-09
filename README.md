@@ -104,7 +104,7 @@ The Drama Manager is a web-based application designed to streamline the manageme
    git clone <repository-url>
    ```
 2. Import the database:
-   - Use the `qssdrama79.sql` file to set up the database schema and initial data.
+   - Use the `dramamanager.sql` file to set up the database schema and initial data.
 3. Set up file permissions:
    - Ensure the `uploads/` directory is writable by the web server.
 4. Install Python dependencies:
