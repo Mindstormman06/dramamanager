@@ -1,7 +1,8 @@
 <?php
-// Return existing config, creating site_config.php with defaults if missing.
+// Return existing config, creating backend/config/site_config.php with defaults if missing.
 
 $siteConfigFile = __DIR__ . '/config/site_config.php';
+$siteConfigDir  = dirname($siteConfigFile);
 
 $defaults = [
     'site_title' => 'Drama Manager',
@@ -19,13 +20,25 @@ $defaults = [
     'admin_creation_key' => 'changeme',
 ];
 
+// Ensure config directory exists
+if (!is_dir($siteConfigDir)) {
+    @mkdir($siteConfigDir, 0755, true);
+}
+
 if (!file_exists($siteConfigFile)) {
     $php = "<?php\n\nreturn " . var_export($defaults, true) . ";\n";
-    if (@file_put_contents($siteConfigFile, $php, LOCK_EX) === false) {
+    // Atomic write: write to temp then rename
+    $tmp = $siteConfigFile . '.tmp';
+    if (@file_put_contents($tmp, $php, LOCK_EX) !== false) {
+        @rename($tmp, $siteConfigFile);
+        @chmod($siteConfigFile, 0644);
+    } else {
+        // Can't write: fall back to defaults in-memory
         return $defaults;
     }
 }
 
+// Load config, fall back to defaults
 $config = @include $siteConfigFile;
 if (!is_array($config)) {
     return $defaults;

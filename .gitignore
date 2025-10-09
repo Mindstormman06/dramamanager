@@ -4,3 +4,4 @@ bot/discord-rehearsal-bot/.env
 logs/*
 backend/config/*
 docker-compose.yml
+logs/site.log
