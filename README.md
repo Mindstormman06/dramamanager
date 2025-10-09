@@ -111,6 +111,17 @@ The Drama Manager is a web-based application designed to streamline the manageme
    ```bash
    pip install pymupdf
    ```
+5. Setup the Discord bot .env (Optional)
+   - Create bot/discord-rehearsal-bot/.env
+   - Insert data in this format:
+   ```env
+   DISCORD_TOKEN=<Bot Token>
+   GUILD_ID=<Server ID>
+   SCHEDULE_CHANNEL_ID=<Channel ID>
+   SCHEDULE_PINGS=true
+   CHANGELOG_PINGS=true
+   CHANGELOG_CHANNEL_ID=<Channel ID>
+   ```
 5. Start your web server and access the application via `http://localhost/<project-folder>`.
 6. Configure the database connection:
    - After accessing the site once, update the `backend/db_config.php` file with your database credentials.
