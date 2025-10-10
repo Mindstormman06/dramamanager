@@ -94,10 +94,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } else {
                         $canonical = $uploadDir . 'logo.png';
                         if ($ext === 'png') {
-                            // replace canonical (remove old if exists)
-                            if (file_exists($canonical)) @unlink($canonical);
-                            rename($dest, $canonical);
-                            $newConfig['uploaded_logo'] = '/assets/logo.png';
+                            // Only attempt rename if source and target are different and source exists
+                            if ($dest !== $canonical) {
+                                if (file_exists($canonical)) @unlink($canonical);
+                                if (file_exists($dest)) {
+                                    if (!@rename($dest, $canonical)) {
+                                        // fallback: try copy then unlink
+                                        if (@copy($dest, $canonical)) {
+                                            @unlink($dest);
+                                        } else {
+                                            $last = error_get_last();
+                                            $errors[] = 'Failed to install uploaded PNG logo.';
+                                            log_event("Failed to install uploaded PNG logo. src={$dest} dest={$canonical} last=" . json_encode($last) . " by '{$_SESSION['username']}'", 'ERROR');
+                                        }
+                                    }
+                                } else {
+                                    $errors[] = 'Uploaded file missing after upload.';
+                                    log_event("Uploaded logo file missing: {$dest} by '{$_SESSION['username']}'", 'ERROR');
+                                }
+                            } else {
+                                // dest equals canonical — ensure file exists
+                                if (!file_exists($canonical)) {
+                                    $errors[] = 'Uploaded PNG not found at expected location.';
+                                    log_event("Expected uploaded PNG not found at {$canonical} by '{$_SESSION['username']}'", 'ERROR');
+                                }
+                            }
+
+                            if (empty($errors)) {
+                                $newConfig['uploaded_logo'] = '/assets/logo.png';
+                            }
                         } else {
                             // try GD conversion
                             $converted = false;

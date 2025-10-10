@@ -5,3 +5,4 @@ logs/*
 backend/config/*
 docker-compose.yml
 logs/site.log
+logs/site.log
