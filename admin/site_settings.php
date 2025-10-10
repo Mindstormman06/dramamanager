@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle logo upload (same rules as before)
+    // Replace the entire logo upload block with this simplified version
     if (isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
         if ($_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
             $errors[] = 'Error uploading logo file.';
@@ -85,67 +86,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($info === false || !isset($allowedMime[$info['mime']])) {
                     $errors[] = 'Logo must be a valid image (jpg, png, gif, webp).';
                 } else {
-                    $ext = $allowedMime[$info['mime']];
                     $uploadDir = __DIR__ . '/../assets/';
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                    $dest = $uploadDir . 'logo.' . $ext;
-                    if (!move_uploaded_file($tmp, $dest)) {
-                        $errors[] = 'Failed to move uploaded logo.';
-                    } else {
-                        $canonical = $uploadDir . 'logo.png';
-                        if ($ext === 'png') {
-                            // Only attempt rename if source and target are different and source exists
-                            if ($dest !== $canonical) {
-                                if (file_exists($canonical)) @unlink($canonical);
-                                if (file_exists($dest)) {
-                                    if (!@rename($dest, $canonical)) {
-                                        // fallback: try copy then unlink
-                                        if (@copy($dest, $canonical)) {
-                                            @unlink($dest);
-                                        } else {
-                                            $last = error_get_last();
-                                            $errors[] = 'Failed to install uploaded PNG logo.';
-                                            log_event("Failed to install uploaded PNG logo. src={$dest} dest={$canonical} last=" . json_encode($last) . " by '{$_SESSION['username']}'", 'ERROR');
-                                        }
-                                    }
-                                } else {
-                                    $errors[] = 'Uploaded file missing after upload.';
-                                    log_event("Uploaded logo file missing: {$dest} by '{$_SESSION['username']}'", 'ERROR');
-                                }
+                    
+                    $finalPath = $uploadDir . 'logo.png';
+                    
+                    // Always convert to PNG
+                    if (function_exists('imagecreatefromstring') && function_exists('imagepng')) {
+                        $imgData = file_get_contents($tmp);
+                        $im = @imagecreatefromstring($imgData);
+                        if ($im !== false) {
+                            // Delete old logo if exists
+                            if (file_exists($finalPath)) @unlink($finalPath);
+                            
+                            if (imagepng($im, $finalPath)) {
+                                imagedestroy($im);
+                                log_event("Site logo uploaded and converted to PNG by '{$_SESSION['username']}'", 'INFO');
                             } else {
-                                // dest equals canonical — ensure file exists
-                                if (!file_exists($canonical)) {
-                                    $errors[] = 'Uploaded PNG not found at expected location.';
-                                    log_event("Expected uploaded PNG not found at {$canonical} by '{$_SESSION['username']}'", 'ERROR');
-                                }
-                            }
-
-                            if (empty($errors)) {
-                                $newConfig['uploaded_logo'] = '/assets/logo.png';
+                                $errors[] = 'Failed to save converted logo.';
+                                imagedestroy($im);
                             }
                         } else {
-                            // try GD conversion
-                            $converted = false;
-                            if (function_exists('imagecreatefromstring') && function_exists('imagepng')) {
-                                $imgData = file_get_contents($dest);
-                                $im = @imagecreatefromstring($imgData);
-                                if ($im !== false) {
-                                    imagepng($im, $canonical);
-                                    imagedestroy($im);
-                                    $converted = true;
-                                    @unlink($dest);
-                                }
-                            }
-                            if ($converted) {
-                                $newConfig['uploaded_logo'] = '/assets/logo.png';
-                            } else {
-                                // fallback: keep original uploaded file path
-                                $fallbackName = $uploadDir . 'logo.' . $ext;
-                                rename($dest, $fallbackName);
-                                $newConfig['uploaded_logo'] = '/uploads/' . basename($fallbackName);
-                            }
+                            $errors[] = 'Failed to process image. GD library error.';
                         }
-                        log_event("Site logo uploaded by '{$_SESSION['username']}'", 'INFO');
+                    } else {
+                        $errors[] = 'Server cannot convert images. GD library not available.';
                     }
                 }
             }
@@ -170,21 +135,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             log_event("Site configuration updated by '{$_SESSION['username']}'", 'INFO');
             $success = 'Settings saved.';
             $config = $out;
+            if (function_exists('opcache_reset')) {
+                opcache_reset();
+            }
         }
     }
 }
 
 // Prepare logo URL for display: prefer canonical /uploads/logo.png else config uploaded_logo
+// Prepare logo URL for display
 $logoUrl = '/assets/logo.png';
-$canonicalPath = __DIR__ . '/../assets/logo.png';
-if (!file_exists($canonicalPath) && !empty($config['uploaded_logo'])) {
-    $logoUrl = $config['uploaded_logo'];
-}
-$logoFsPath = __DIR__ . '/..' . $logoUrl;
+$logoFsPath = __DIR__ . '/../assets/logo.png';
 $logoExists = file_exists($logoFsPath);
 if ($logoExists) {
     $logoUrl .= '?ts=' . filemtime($logoFsPath);
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
