@@ -239,6 +239,15 @@ switch ($routeParts[0]) {
                         echo "404 - Page not found";
                     }
                     break;
+
+                case 'select':
+                    if (file_exists('show_select.php')) {
+                        include 'show_select.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
                     
                 default:
                     http_response_code(404);

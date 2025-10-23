@@ -6,9 +6,17 @@ $config = require __DIR__ . '/backend/load_site_config.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+if (isset($_SESSION['user_id'])) {
+    $currentPage = basename($_SERVER['PHP_SELF']);
+
+    // Redirect to select-show if user is logged in but hasn't picked a show
+    if (!isset($_SESSION['active_show']) && $currentPage !== 'select_show.php' && strpos($_SERVER['REQUEST_URI'], '/shows/select/') === false) {
+        header('Location: /shows/select/');
+        exit;
+    }
+
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -52,6 +60,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         <a href="/" class="text-2xl font-bold hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
           <?= htmlspecialchars($config['site_title']) ?>
         </a>
+
+        <?php if (isset($_SESSION['active_show'])): ?>
+          <div class="text-sm text-gray-600">
+            Active Show: <strong><?= htmlspecialchars($_SESSION['active_show_name'] ?? '') ?></strong>
+          </div>
+        <?php endif; ?>
+
       </div>
 
       <div class="relative flex items-center gap-4">
