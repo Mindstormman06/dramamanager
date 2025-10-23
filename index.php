@@ -1,8 +1,4 @@
 <?php
-// Start Session if it's not already started
-if (session_status() === PHP_SESSION_NONE) session_start();
-
-
 include 'header.php';
 ?>
 
@@ -30,38 +26,11 @@ include 'header.php';
       <p class="text-gray-700">View upcoming rehearsals. Teachers can schedule new rehearsals and select participants.</p>
     </a>
 
-    <!-- Student-only block -->
-    <?php if ($_SESSION['role'] == 'student'): ?>
-    <a href="/info/student/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">👤 Your Characters</h2>
-      <p class="text-gray-700">See the characters you've been assigned to in each production.</p>
-    </a>
-    <?php endif; ?>
-
-    <!-- Teacher/Admin-only blocks -->
-    <?php if ($_SESSION['role'] == 'director' || $_SESSION['role'] == 'manager'): ?>
-
-    <a href="/scripts/add/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">📜 Script Import</h2>
-      <p class="text-gray-700">Create a new show from a script file with automatic parsing.</p>
-    </a>
-
-    <a href="shows/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">🎭 Shows</h2>
-      <p class="text-gray-700">Manage all current and past productions, including details and casts.</p>
-    </a>
-
+    <!-- Character List -->
     <a href="characters/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
       <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">👥 Character List</h2>
       <p class="text-gray-700">View and manage character profiles and assignments.</p>
     </a>
-
-    <a href="ideas/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">💡 Ideas Planner</h2>
-      <p class="text-gray-700">Save future line, show, or character ideas for brainstorming sessions.</p>
-    </a>
-
-    <?php endif; ?>
 
     <!-- Photo Album -->
     <a href="album/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
@@ -73,6 +42,14 @@ include 'header.php';
       <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">🎫 Show Selection</h2>
       <p class="text-gray-700">Select, create, or join a show.</p>
     </a>
+
+    <!-- Director/Manager blocks -->
+    <?php if ($_SESSION['role'] == 'director' || $_SESSION['role'] == 'manager'): ?>
+      <a href="shows/manage/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
+        <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">🎭 Show Management</h2>
+        <p class="text-gray-700">Manage show information and members.</p>
+      </a>
+    <?php endif; ?>
 
     <!-- Site/bot Settings (admin) -->
     <?php if ($_SESSION['user_role'] == 'admin'): ?>

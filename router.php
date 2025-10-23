@@ -222,18 +222,9 @@ switch ($routeParts[0]) {
         
         if (isset($routeParts[1])) {
             switch ($routeParts[1]) {
-                case 'add':
-                    if (file_exists('add_show.php')) {
-                        include 'add_show.php';
-                    } else {
-                        http_response_code(404);
-                        echo "404 - Page not found";
-                    }
-                    break;
-                    
-                case 'edit':
-                    if (file_exists('edit_show.php')) {
-                        include 'edit_show.php';
+                case 'manage':
+                    if (file_exists('manage.php')) {
+                        include 'manage.php';
                     } else {
                         http_response_code(404);
                         echo "404 - Page not found";
@@ -241,8 +232,8 @@ switch ($routeParts[0]) {
                     break;
 
                 case 'select':
-                    if (file_exists('show_select.php')) {
-                        include 'show_select.php';
+                    if (file_exists('select.php')) {
+                        include 'select.php';
                     } else {
                         http_response_code(404);
                         echo "404 - Page not found";

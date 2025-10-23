@@ -2,52 +2,22 @@
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
-// Allowed sorting options
-$allowedSorts = ['name', 'condition', 'category', 'show'];
-$sort = $_GET['sort'] ?? 'name'; // Default sort by name
-$sort = in_array($sort, $allowedSorts) ? $sort : 'name';
+$show_id = $_SESSION['active_show'] ?? null;
 
-//Default required role
-$required_role='props';
-
-// Map sort keys to database columns
-$sortColumn = match ($sort) {
-    'condition' => 'props.itemcondition',
-    'category' => 'propcategories.name',
-    'show' => 'shows.title',
-    default => 'props.name',
-};
-
-// Helper for sort links (to match costumes.php)
-function sortLink($label, $key, $currentSort) {
-    global $config;
-    $base = 'text-blue-600 hover:underline';
-    $textColour = htmlspecialchars($config['text_colour'] ?? '#000');
-    $textColourClass = "text-[$textColour]";
-    $active = $key === $currentSort ? "font-bold underline $textColourClass" : $base;
-
-    $labelEsc = htmlspecialchars($label);
-    $keyEsc = urlencode($key);
-
-    return "<a href=\"?sort={$keyEsc}\" class=\"{$active}\">{$labelEsc}</a>";
-}
-
-// Fetch all props with category and show associations
+// Fetch all props for the current show (stored in assets table with type = 'prop')
 $stmt = $pdo->prepare("
-    SELECT 
-        props.*, 
-        propcategories.name AS category_name,
-        GROUP_CONCAT(shows.title ORDER BY shows.title ASC SEPARATOR ', ') AS show_titles
-    FROM props
-    LEFT JOIN propcategories ON props.category_id = propcategories.id
-    LEFT JOIN showprops ON props.id = showprops.prop_id
-    LEFT JOIN shows ON showprops.show_id = shows.id
-    GROUP BY props.id
-    ORDER BY $sortColumn ASC
+  SELECT 
+    a.id, a.name, a.notes, a.photo_url, a.created_at,
+    u.full_name AS owner_name
+  FROM assets a
+  LEFT JOIN users u ON a.owner_id = u.id
+  WHERE a.show_id = ? AND a.type = 'prop'
+  ORDER BY owner_name ASC
 ");
-$stmt->execute();
+$stmt->execute([$show_id]);
 $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,60 +30,43 @@ $props = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">Props</h1>
-      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
-        <a href="/props/add/" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded shadow hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
+      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager'): ?>
+        <a href="/props/add_prop.php" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded shadow hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           + Add Prop
         </a>
       <?php endif; ?>
     </div>
 
-    <div class="mb-4 text-sm">
-      <span class="text-gray-700 font-medium">Sort by:</span>
-      <?= sortLink("Name", "name", $sort) ?> |
-      <?= sortLink("Condition", "condition", $sort) ?> |
-      <?= sortLink("Category", "category", $sort) ?> |
-      <?= sortLink("Show", "show", $sort) ?>
-    </div>
-
     <?php if (count($props) === 0): ?>
-      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
       <div class="text-center py-10 text-gray-500 italic">
-        No costumes found. Click <strong class="text-[<?= htmlspecialchars($config['text_colour']) ?>]">“Add Prop”</strong> to get started!
+        No props found for this show.
+        <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager'): ?>
+          Click <strong class="text-[<?= htmlspecialchars($config['text_colour']) ?>]">“Add Prop”</strong> to get started!
+        <?php endif; ?>
       </div>
-      <?php else: ?>
-        <div class="text-center py-2 text-gray-500 italic">
-          No costumes found.
-        </div>
-      <?php endif; ?>
     <?php else: ?>
       <div class="grid gap-4 md:grid-cols-2">
         <?php foreach ($props as $p): ?>
           <div class="bg-white rounded-xl p-5 shadow-md border-l-4 border-[<?= $config['border_colour'] ?>] flex gap-4 hover:shadow-lg transition">
             <?php if (!empty($p['photo_url'])): ?>
-              <img src="../<?= htmlspecialchars($p['photo_url']) ?>" alt="Photo of <?= htmlspecialchars($p['name']) ?>" class="w-24 h-24 object-cover rounded-lg">
+              <img src="../<?= ltrim(htmlspecialchars($p['photo_url']), '/') ?>" alt="Photo of <?= htmlspecialchars($p['name']) ?>" class="w-24 h-24 object-cover rounded-lg">
             <?php else: ?>
               <div class="w-24 h-24 flex items-center justify-center bg-gray-200 text-gray-400 rounded">No Photo</div>
             <?php endif; ?>
 
             <div class="flex-1">
               <h3 class="text-xl font-bold"><?= htmlspecialchars($p['name']) ?></h3>
-              <?php if (isset($p['category_name'])): ?>
-                <p class="text-gray-700 text-sm leading-relaxed">Category: <?= htmlspecialchars($p['category_name']) ?></p>
+              <?php if ($p['owner_name']): ?>
+                <p class="text-gray-700 text-sm leading-relaxed"><?= htmlspecialchars($p['owner_name']) ?></p>
               <?php endif; ?>
-              <?php if (isset($p['description'])): ?>
-                <p class="text-gray-700 text-sm leading-relaxed">Description: <?= htmlspecialchars($p['description']) ?></p>
-              <?php endif; ?>
-              <?php if (isset($p['itemcondition'])): ?>
-                <p class="text-gray-700 text-sm leading-relaxed">Condition: <?= htmlspecialchars($p['itemcondition']) ?></p>
-              <?php endif; ?>
-              <?php if (isset($p['show_titles'])): ?>
-                <p class="text-gray-700 text-sm leading-relaxed">Used In: <?= htmlspecialchars($p['show_titles']) ?></p>
+              <?php if ($p['notes']): ?>
+                <p class="text-gray-700 text-sm leading-relaxed italic"><?= htmlspecialchars($p['notes']) ?></p>
               <?php endif; ?>
 
-              <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+              <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager'): ?>
                 <div class="flex gap-4 mt-2 text-sm">
-                  <a href="/props/edit/?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-                  <a href="../backend/props/delete_prop.php?id=<?= $p['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this prop?');">Delete</a>
+                  <a href="/props/edit_prop.php?id=<?= $p['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="/backend/props/delete_prop.php?id=<?= $p['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this prop?');">Delete</a>
                 </div>
               <?php endif; ?>
             </div>

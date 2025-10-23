@@ -12,7 +12,7 @@ if (!isset($_GET['id'])) {
 
 $costume_id = intval($_GET['id']);
 
-// Optionally delete the image file
+// Delete the image file
 $stmt = $pdo->prepare("SELECT photo_url, name FROM costumes WHERE id = ?");
 $stmt->execute([$costume_id]);
 $costume = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -1,7 +1,6 @@
 <?php
 include '../header.php';
-require_once __DIR__ . '/../backend/db.php';
-$config = require '../backend/load_site_config.php';
+
 
 $user_id = $_SESSION['user_id'];
 $error = '';
@@ -95,8 +94,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_show'])) {
             // Check if already in show
             $stmt = $pdo->prepare("SELECT * FROM show_users WHERE user_id = ? AND show_id = ?");
             $stmt->execute([$user_id, $show['id']]);
-            if ($stmt->fetch()) {
-                $error = 'You are already part of this show.';
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($existing) {
+                if ($existing['banned']) {
+                    $error = 'You have been banned from this show.';
+                } else {
+                    $error = 'You are already part of this show.';
+                }
             } else {
                 // Add as cast member
                 $stmt = $pdo->prepare("INSERT INTO show_users (user_id, show_id, role) VALUES (?, ?, 'cast')");
