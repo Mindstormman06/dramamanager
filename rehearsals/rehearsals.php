@@ -19,6 +19,28 @@ $stmt->execute([$show_id]);
 $totalShowUsers = (int)$stmt->fetchColumn();
 
 // Fetch rehearsals (and whether current user is called, and attendee count)
+// Determine filter
+$filter = $_GET['filter'] ?? 'all';
+$where = "r.show_id = ?";
+$params = [$show_id];
+
+// Adjust query based on filter
+switch ($filter) {
+  case 'mine':
+    $where .= " AND EXISTS(SELECT 1 FROM rehearsal_attendees ra WHERE ra.rehearsal_id = r.id AND ra.user_id = ?)";
+    $params[] = $user_id;
+    break;
+  case 'upcoming':
+    $where .= " AND r.date >= CURDATE()";
+    break;
+  case 'past':
+    $where .= " AND r.date < CURDATE()";
+    break;
+  default:
+    break;
+}
+
+// Fetch rehearsals
 $stmt = $pdo->prepare("
   SELECT
     r.*,
@@ -30,11 +52,12 @@ $stmt = $pdo->prepare("
      WHERE ra3.rehearsal_id = r.id
     ) AS attendee_first_names
   FROM rehearsals r
-  WHERE r.show_id = ?
+  WHERE $where
   ORDER BY r.date ASC, r.start_time ASC
 ");
-$stmt->execute([$user_id, $show_id]);
+$stmt->execute(array_merge([$user_id], $params));
 $rehearsals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 // Colours from config
 $accent = htmlspecialchars($config['border_colour'] ?? '#ef4444');           // border accent for “mine”
@@ -58,6 +81,25 @@ $textColour = htmlspecialchars($config['text_colour'] ?? '#111827');
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-bold text-[<?= $textColour ?>]">🎭 Rehearsal Schedule</h1>
+      <!-- Filter Chips -->
+      <div class="flex flex-wrap gap-2 mt-4 mb-6">
+        <?php
+        $filters = [
+          'all' => 'All',
+          'mine' => 'Only Mine',
+          'upcoming' => 'Upcoming',
+          'past' => 'Past'
+        ];
+        foreach ($filters as $key => $label) {
+          $active = $filter === $key;
+          $base = "px-3 py-1 rounded-full border text-sm font-medium transition";
+          $classes = $active
+            ? "bg-[{$config['button_colour']}] text-white border-[{$config['button_colour']}]"
+            : "border-gray-300 text-gray-700 hover:bg-gray-100";
+          echo "<a href='?filter=$key' class='$base $classes'>$label</a>";
+        }
+        ?>
+      </div>
       <div class="flex gap-2">
         <button id="toggleViewBtn"
           class="bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white px-4 py-2 rounded shadow transition">
