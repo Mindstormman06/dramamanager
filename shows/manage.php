@@ -84,6 +84,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unban_member'])) {
     $success = 'Member unbanned and restored to active status.';
 }
 
+// Handle photo upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_photo'])) {
+    $memberId = $_POST['member_id'];
+    $showId = $show_id;
+
+    if (!empty($_FILES['photo']['name'])) {
+        $targetDir = "../uploads/show_photos/";
+        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+        $fileName = $showId . "_" . $memberId . "_" . time() . "_" . basename($_FILES["photo"]["name"]);
+        $targetFile = $targetDir . $fileName;
+        move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
+        $photoUrl = "/uploads/show_photos/" . $fileName;
+
+        // Remove any existing photo for this user+show
+        $pdo->prepare("DELETE FROM show_user_photos WHERE show_id = ? AND user_id = ?")->execute([$showId, $memberId]);
+
+        // Save new photo
+        $stmt = $pdo->prepare("INSERT INTO show_user_photos (show_id, user_id, photo_url) VALUES (?, ?, ?)");
+        $stmt->execute([$showId, $memberId, $photoUrl]);
+
+        $success = 'Headshot uploaded successfully.';
+    } else {
+        $error = 'Please choose a file.';
+    }
+}
+
+
 // Fetch all show members
 $stmt = $pdo->prepare("
     SELECT u.id, u.username, u.email, su.role, su.banned
@@ -137,7 +165,7 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <th class="px-4 py-2 border-b">Username</th>
             <th class="px-4 py-2 border-b">Email</th>
             <th class="px-4 py-2 border-b">Role</th>
-            <th class="px-4 py-2 border-b">Status</th>
+            <th class="px-4 py-2 border-b">Headshot</th>
             <th class="px-4 py-2 border-b text-center">Actions</th>
           </tr>
         </thead>
@@ -165,10 +193,18 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <span class="text-gray-500 italic">N/A</span>
                 <?php endif; ?>
               </td>
-              <td class="px-4 py-2 text-sm">
-                <?= $member['banned'] ? '<span class="text-red-600 font-semibold">Banned</span>' : 'Active' ?>
+              <td class="px-4 py-2 text-center align-top">
+                <?php if (!$member['banned']): ?>
+                  <form method="POST" class="inline upload-form" enctype="multipart/form-data">
+                    <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
+                    <label class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-xs cursor-pointer inline-block">
+                      Upload
+                      <input type="file" name="photo" accept="image/*" class="hidden upload-input">
+                    </label>
+                  </form>
+                <?php endif; ?>
               </td>
-              <td class="px-4 py-2 text-center space-x-2">
+              <td class="px-4 py-2 text-center space-x-2 align-top">
                 <?php if (!$member['banned']): ?>
                   <form method="POST" class="inline">
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
@@ -195,5 +231,30 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <a href="/index.php" class="text-blue-600 hover:underline">← Back to Dashboard</a>
     </div>
   </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.upload-input').forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.files.length > 0) {
+            const form = this.closest('.upload-form');
+            const formData = new FormData(form);
+            formData.append('upload_photo', '1');
+
+            fetch(window.location.href, {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.text())
+            .then(() => {
+              // Refresh to show success or update instantly
+              location.reload();
+            })
+            .catch(err => console.error('Upload failed:', err));
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

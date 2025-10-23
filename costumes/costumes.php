@@ -58,8 +58,8 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <?php if (
                 $_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager'): ?>
                 <div class="flex gap-4 mt-2 text-sm">
-                  <a href="/costumes/edit_costume.php?id=<?= $c['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
-                  <a href="/backend/delete_costume.php?id=<?= $c['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this costume?');">Delete</a>
+                  <a href="/costumes/edit/?id=<?= $c['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="../backend/costumes/delete_costume.php?id=<?= $c['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this costume?');">Delete</a>
                 </div>
               <?php endif; ?>
             </div>

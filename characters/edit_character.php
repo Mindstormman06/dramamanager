@@ -1,233 +1,81 @@
 <?php
-require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
+require_once __DIR__ . '/../backend/db.php';
 
+$show_id = $_SESSION['active_show'] ?? null;
 $id = $_GET['id'] ?? null;
-if (!$id) {
-    header("Location: /characters/");
-    exit;
-}
+if (!$show_id || !$id) header('Location: /characters/');
 
-// Fetch character
-$stmt = $pdo->prepare("SELECT * FROM characters WHERE id = ?");
-$stmt->execute([$id]);
+$stmt = $pdo->prepare("
+  SELECT c.*, u.full_name AS actor_name, ca.user_id AS actor_id
+  FROM characters c
+  LEFT JOIN casting ca ON c.id = ca.character_id
+  LEFT JOIN users u ON ca.user_id = u.id
+  WHERE c.id = ? AND c.show_id = ?
+");
+$stmt->execute([$id, $show_id]);
 $char = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$char) die("Character not found.");
 
-if (!$char) {
-    die("Character not found.");
-}
-
-$loggedInUsername = $_SESSION['username'];
-
-// Fetch the logged-in teacher's ID
-$stmt = $pdo->prepare("SELECT id FROM teachers WHERE username = ?");
-$stmt->execute([$loggedInUsername]);
-$teacher = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$teacher) {
-    die('You are not registered as a teacher.');
-}
-
-$teacherId = $teacher['id']; // The actual teacher ID
-
-// Fetch the lead teacher for the logged-in teacher (if they are a linked teacher)
-$leadTeacherStmt = $pdo->prepare("
-    SELECT lead_teacher_id 
-    FROM teacher_links 
-    WHERE linked_teacher_id = ?
+$stmt = $pdo->prepare("
+  SELECT u.id, u.full_name
+  FROM show_users su
+  JOIN users u ON su.user_id = u.id
+  WHERE su.show_id = ? AND su.role IN ('cast','manager','director')
+  ORDER BY u.full_name ASC
 ");
-$leadTeacherStmt->execute([$teacherId]);
-$leadTeacherId = $leadTeacherStmt->fetchColumn();
-
-// Include the lead teacher's ID (if any) in the list of teacher IDs
-$allTeacherIds = [$teacherId];
-if ($leadTeacherId) {
-    $allTeacherIds[] = $leadTeacherId;
-}
-
-// Fetch teachers linked to the logged-in teacher (if they are a lead teacher)
-$linkedTeachersStmt = $pdo->prepare("
-    SELECT linked_teacher_id 
-    FROM teacher_links 
-    WHERE lead_teacher_id = ?
-");
-$linkedTeachersStmt->execute([$teacherId]);
-$linkedTeacherIds = $linkedTeachersStmt->fetchAll(PDO::FETCH_COLUMN);
-
-// Merge all relevant teacher IDs (logged-in teacher, lead teacher, and linked teachers)
-$allTeacherIds = array_merge($allTeacherIds, $linkedTeacherIds);
-
-// Fetch students linked to all relevant teachers
-$placeholders = implode(',', array_fill(0, count($allTeacherIds), '?'));
-$studentStmt = $pdo->prepare("
-    SELECT s.id, s.first_name, s.last_name 
-    FROM students s
-    WHERE s.teacher_id IN ($placeholders)
-");
-$studentStmt->execute($allTeacherIds);
-$students = $studentStmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch the linked student (if any)
-$linkedStudentStmt = $pdo->prepare("
-    SELECT sc.student_id, s.first_name, s.last_name 
-    FROM studentcharacters sc
-    JOIN students s ON sc.student_id = s.id
-    WHERE sc.character_id = ?
-");
-$linkedStudentStmt->execute([$id]);
-$linkedStudent = $linkedStudentStmt->fetch(PDO::FETCH_ASSOC);
-
-$stage_name = $char['stage_name'];
-$real_name = $char['real_name'];
-$show_id = $char['show_id'];
-$linked_student_id = $linkedStudent['student_id'] ?? null;
-
-// Fetch the show title based on the show_id
-$showStmt = $pdo->prepare("SELECT title FROM shows WHERE id = ?");
-$showStmt->execute([$show_id]);
-$show = $showStmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$show) {
-    die("Associated show not found.");
-}
-
-$show_title = $show['title'];
-
-$errors = [];
+$stmt->execute([$show_id]);
+$cast = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stage_name = trim($_POST['stage_name']);
-    $real_name = trim($_POST['real_name']);
-    $student_id = $_POST['student_id'] ?? null;
+  $name = trim($_POST['name']);
+  $desc = trim($_POST['description']);
+  $actor_id = $_POST['actor_id'] ?: null;
 
-    if (empty($stage_name)) {
-        $errors[] = "Stage name is required.";
-    }
+  $pdo->prepare("UPDATE characters SET name = ?, description = ? WHERE id = ? AND show_id = ?")
+      ->execute([$name, $desc, $id, $show_id]);
 
-    if (empty($errors)) {
-        // Update the character in the characters table
-        $stmt = $pdo->prepare("UPDATE characters SET stage_name = ?, real_name = ? WHERE id = ?");
-        $stmt->execute([$stage_name, $real_name ?: null, $id]);
+  $pdo->prepare("DELETE FROM casting WHERE character_id = ?")->execute([$id]);
+  if ($actor_id) {
+    $pdo->prepare("INSERT INTO casting (show_id, character_id, user_id) VALUES (?, ?, ?)")
+        ->execute([$show_id, $id, $actor_id]);
+  }
 
-        // Log the update
-        log_event("Character '{$stage_name}' (ID: {$id}) updated by user '{$_SESSION['username']}'", 'INFO');
-
-        // Update the student link
-        if ($student_id && $student_id !== 'manual') {
-            // Fetch the student's full name
-            $studentStmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE id = ?");
-            $studentStmt->execute([$student_id]);
-            $student = $studentStmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($student) {
-                $real_name = $student['first_name'] . ' ' . $student['last_name'];
-
-                // Update the real_name in the characters table
-                $stmt = $pdo->prepare("UPDATE characters SET real_name = ? WHERE id = ?");
-                $stmt->execute([$real_name, $id]);
-
-                // Check if the link already exists in the studentcharacters table
-                $linkCheckStmt = $pdo->prepare("SELECT COUNT(*) FROM studentcharacters WHERE character_id = ? AND student_id = ?");
-                $linkCheckStmt->execute([$id, $student_id]);
-                $linkExists = $linkCheckStmt->fetchColumn() > 0;
-
-                if (!$linkExists) {
-                    // Insert the new link if it doesn't exist
-                    $stmt = $pdo->prepare("INSERT INTO studentcharacters (character_id, student_id) VALUES (?, ?)");
-                    $stmt->execute([$id, $student_id]);
-
-                    // Log the new link
-                    log_event("Character '{$stage_name}' (ID: {$id}) linked to student '{$real_name}' (ID: {$student_id}) by user '{$_SESSION['username']}'", 'INFO');
-                }
-            }
-        } else {
-            // If manual input, remove any existing link in the studentcharacters table
-            $stmt = $pdo->prepare("DELETE FROM studentcharacters WHERE character_id = ?");
-            $stmt->execute([$id]);
-
-            // Log unlink / manual change
-            log_event("Character '{$stage_name}' (ID: {$id}) unlinked from any student and set manual real name '" . ($real_name ?: '') . "' by user '{$_SESSION['username']}'", 'INFO');
-        }
-
-        // Redirect back to the characters page for the selected show
-        header("Location: /characters/?show_id=$show_id");
-        exit;
-    }
+  header("Location: /characters/");
+  exit;
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Edit Character | <?=htmlspecialchars($config['site_title'])?></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">Edit Character</h1>
-    <a href="/characters/?show_id=<?= $show_id ?>" class="text-blue-600 hover:underline mb-4">← Back to Character List</a>
 
-    <?php if ($errors): ?>
-      <div class="bg-red-100 text-red-700 border border-red-300 p-4 rounded mb-6">
-        <ul class="list-disc list-inside">
-          <?php foreach ($errors as $error): ?>
-            <li><?= htmlspecialchars($error) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-    <?php endif; ?>
 
-    <form method="POST" class="bg-white p-6 rounded-lg shadow border space-y-4">
+  <main class="flex-1 w-full max-w-6xl px-4 py-12 mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Edit Character</h1>
+
+    <form method="POST" class="bg-white p-6 rounded shadow space-y-4">
       <div>
-        <label for="stage_name" class="block font-medium mb-1">Stage Name *</label>
-        <input type="text" name="stage_name" id="stage_name" required value="<?= htmlspecialchars($stage_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
+        <label class="block font-semibold mb-1">Name</label>
+        <input type="text" name="name" value="<?= htmlspecialchars($char['name']) ?>" class="w-full border rounded p-2" required>
       </div>
-
       <div>
-        <label for="student_id" class="block font-medium mb-1">Linked Student</label>
-        <select name="student_id" id="student_id" class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" onchange="toggleManualInput()">
-          <option value="">-- Select a Student --</option>
-          <?php foreach ($students as $student): ?>
-            <option value="<?= $student['id'] ?>" <?= $linked_student_id == $student['id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?>
+        <label class="block font-semibold mb-1">Description</label>
+        <textarea name="description" class="w-full border rounded p-2"><?= htmlspecialchars($char['description']) ?></textarea>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Assign Actor</label>
+        <select name="actor_id" class="w-full border rounded p-2">
+          <option value="">— None —</option>
+          <?php foreach ($cast as $c): ?>
+            <option value="<?= $c['id'] ?>" <?= $char['actor_id'] == $c['id'] ? 'selected' : '' ?>>
+              <?= htmlspecialchars($c['full_name']) ?>
             </option>
           <?php endforeach; ?>
-          <option value="manual">Other (Enter Manually)</option>
         </select>
       </div>
-
-      <div id="manual-input" class="<?= $linked_student_id ? 'hidden' : '' ?>">
-        <label for="real_name" class="block font-medium mb-1">Real Name</label>
-        <input type="text" name="real_name" id="real_name" value="<?= htmlspecialchars($real_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
-      </div>
-
-      <div>
-        <p class="text-sm text-gray-600">Associated Show: <strong><?= htmlspecialchars($show_title) ?></strong></p>
-      </div>
-
-      <div class="flex justify-end">
-        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
-          Save Changes
-        </button>
-      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
     </form>
-  </main>
-  <?php include '../footer.php'; ?>
 
-  <script>
-    function toggleManualInput() {
-      const studentSelect = document.getElementById('student_id');
-      const manualInput = document.getElementById('manual-input');
-      if (studentSelect.value === 'manual') {
-        manualInput.classList.remove('hidden');
-      } else {
-        manualInput.classList.add('hidden');
-        document.getElementById('real_name').value = ''; // Clear manual input
-      }
-    }
-  </script>
+    <div class="mt-4">
+      <a href="characters.php" class="text-blue-600 hover:underline">Back to Character List</a>
+    </div>
+  </main>
 </body>
 </html>

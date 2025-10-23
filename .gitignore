@@ -6,3 +6,4 @@ backend/config/*
 docker-compose.yml
 logs/site.log
 backend/config/site_config.php
+logs/site.log

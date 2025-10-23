@@ -1,89 +1,22 @@
 <?php
-require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
-// Get selected show_id
-$show_id = $_GET['show_id'] ?? null;
+$show_id = $_SESSION['active_show'] ?? null;
 
-// Sort Options
-$sort = $_GET['sort'] ?? 'alpha';
-
-$direction = $_GET['direction'] ?? null;
-
-if (!$direction) {
-  // Default direction based on sort
-  $direction = ($sort === 'alpha') ? 'ASC' : 'DESC';
-} else {
-  $direction = strtoupper($direction) === 'ASC' ? 'ASC' : 'DESC';
-}
-
-switch ($sort) {
-  case 'lines':
-    $orderBy = "line_count $direction";
-    break;
-  case 'mentions':
-    $orderBy = "mention_count $direction";
-    break;
-  case 'alpha':
-  default:
-    $orderBy = "characters.stage_name $direction";
-    break;
-}
-
-
-// Fetch all shows for dropdown
-$allShows = $pdo->query("SELECT id, title, year, semester FROM shows ORDER BY year DESC, title ASC")->fetchAll(PDO::FETCH_ASSOC);
-
-// If no show selected, render show selection page
-if (!$show_id):
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Select Show | Characters</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="max-w-xl mx-auto px-4 py-10">
-    <h1 class="text-2xl font-bold mb-6 text-[<?= htmlspecialchars($config['text_colour']) ?>]">👥 View Characters by Show</h1>
-
-    <form method="GET" action="/characters/" class="space-y-4">
-      <label for="show_id" class="block text-sm font-medium">Select a Show:</label>
-      <select name="show_id" id="show_id"
-              class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" required>
-        <option value="">-- Select a Show --</option>
-        <?php foreach ($allShows as $s): ?>
-          <option value="<?= $s['id'] ?>">
-            <?= htmlspecialchars($s['title']) ?> (<?= $s['year'] ?><?= $s['semester'] ? " – Semester " . $s['semester'] : '' ?>)
-          </option>
-        <?php endforeach; ?>
-      </select>
-      <div class="flex justify-end">
-        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
-          View Characters
-        </button>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
-<?php
-exit;
-endif;
-
-// Fetch characters for selected show
+// Fetch characters & actor assignments
 $stmt = $pdo->prepare("
-    SELECT characters.*, shows.title AS show_title
-    FROM characters
-    LEFT JOIN shows ON characters.show_id = shows.id
-    WHERE characters.show_id = ?
-    ORDER BY $orderBy
+  SELECT 
+    c.id, c.name, c.description, u.full_name AS actor_name, sup.photo_url
+  FROM characters c
+  LEFT JOIN casting ca ON c.id = ca.character_id
+  LEFT JOIN users u ON ca.user_id = u.id
+  LEFT JOIN show_user_photos sup ON sup.user_id = u.id AND sup.show_id = c.show_id
+  WHERE c.show_id = ?
+  ORDER BY c.name ASC
 ");
+
 $stmt->execute([$show_id]);
 $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,44 +30,43 @@ $characters = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">Characters</h1>
-      <a href="/characters/add/?show_id=<?= $show_id ?>" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
-        + Add Character
-      </a>
-    </div>
-
-    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-      <form method="GET" class="flex items-center gap-2">
-        <input type="hidden" name="show_id" value="<?= $show_id ?>">
-        <label for="sort" class="text-sm font-medium text-gray-700">Sort by:</label>
-        <select name="sort" id="sort" class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
-          <option value="alpha" <?= $sort === 'alpha' ? 'selected' : '' ?>>A–Z</option>
-          <option value="lines" <?= $sort === 'lines' ? 'selected' : '' ?>>Line Count</option>
-          <option value="mentions" <?= $sort === 'mentions' ? 'selected' : '' ?>>Mention Count</option>
-        </select>
-        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-1 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
-          Apply
-        </button>
-      </form>
+      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin'): ?>
+        <a href="/characters/add_character.php" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded shadow hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
+          + Add Character
+        </a>
+      <?php endif; ?>
     </div>
 
     <?php if (count($characters) === 0): ?>
-      <p class="text-gray-600">No characters found. Click "Add Character" to start.</p>
+      <div class="text-center py-10 text-gray-500 italic">
+        No characters found for this show.
+      </div>
     <?php else: ?>
-      <div class="grid gap-4">
-        <?php foreach ($characters as $char): ?>
-          <div class="bg-white rounded-lg p-4 shadow border-l-4 border-[<?= $config['border_colour'] ?>]">
-            <h3 class="text-xl font-bold"><?= htmlspecialchars($char['stage_name']) ?></h3>
-            <?php if (!empty($char['real_name'])): ?>
-              <p class="text-gray-700">Real Name: <?= htmlspecialchars($char['real_name']) ?></p>
-            <?php endif; ?>
-            <div class="mt-2 text-sm text-gray-700">
-              Mentions: <span class="font-semibold"><?= $char['mention_count'] ?? 0 ?></span>,
-              Lines: <span class="font-semibold"><?= $char['line_count'] ?? 0 ?></span>
-            </div>
-            <div class="flex gap-4 mt-2 text-sm">
-              <a href="/characters/edit/?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-blue-600 hover:underline">Edit</a>
-              <a href="../backend/characters/delete_character.php?id=<?= $char['id'] ?>&show_id=<?= $show_id ?>" class="text-red-600 hover:underline"
-                 onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
+      <div class="grid gap-4 md:grid-cols-2">
+        <?php foreach ($characters as $ch): ?>
+          <div class="bg-white rounded-xl p-5 shadow-md border-l-4 border-[<?= $config['border_colour'] ?>] flex gap-4 hover:shadow-lg transition">
+
+              <?php if (!empty($ch['photo_url'])): ?>
+                <img src="../<?= ltrim(htmlspecialchars($ch['photo_url']), '/') ?>" alt="Photo of <?= htmlspecialchars($ch['actor_name'] ?? $ch['name']) ?>" class="w-24 h-24 object-cover rounded-lg">
+              <?php else: ?>
+                <div class="w-24 h-24 flex items-center justify-center bg-gray-200 text-gray-400 rounded">🎭</div>
+              <?php endif; ?>
+
+            <div class="flex-1">
+              <h3 class="text-xl font-bold"><?= htmlspecialchars($ch['name']) ?></h3>
+              <?php if ($ch['actor_name']): ?>
+                <p class="text-gray-700 text-sm leading-relaxed">Played by: <?= htmlspecialchars($ch['actor_name']) ?></p>
+              <?php endif; ?>
+              <?php if ($ch['description']): ?>
+                <p class="text-gray-700 text-sm leading-relaxed italic"><?= htmlspecialchars($ch['description']) ?></p>
+              <?php endif; ?>
+
+              <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin'): ?>
+                <div class="flex gap-4 mt-2 text-sm">
+                  <a href="/characters/edit/?id=<?= $ch['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
+                  <a href="../backend/characters/delete_character.php?id=<?= $ch['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
+                </div>
+              <?php endif; ?>
             </div>
           </div>
         <?php endforeach; ?>

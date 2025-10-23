@@ -1,194 +1,80 @@
 <?php
-require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
+require_once __DIR__ . '/../backend/db.php';
 
-$loggedInUsername = $_SESSION['username'];
-
-// Fetch the logged-in teacher's ID
-$stmt = $pdo->prepare("SELECT id FROM teachers WHERE username = ?");
-$stmt->execute([$loggedInUsername]);
-$teacher = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$teacher) {
-    die('You are not registered as a teacher.');
+if (!isset($_SESSION['active_show'])) {
+  header('Location: /show_select.php');
+  exit;
 }
+$show_id = $_SESSION['active_show'];
 
-$teacherId = $teacher['id']; // The actual teacher ID
-
-// Fetch the lead teacher for the logged-in teacher (if they are a linked teacher)
-$leadTeacherStmt = $pdo->prepare("
-    SELECT lead_teacher_id 
-    FROM teacher_links 
-    WHERE linked_teacher_id = ?
+// Fetch cast members to assign
+$stmt = $pdo->prepare("
+  SELECT u.id, u.full_name
+  FROM show_users su
+  JOIN users u ON su.user_id = u.id
+  WHERE su.show_id = ? AND su.role IN ('cast','manager','director')
+  ORDER BY u.full_name ASC
 ");
-$leadTeacherStmt->execute([$teacherId]);
-$leadTeacherId = $leadTeacherStmt->fetchColumn();
+$stmt->execute([$show_id]);
+$cast = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Include the lead teacher's ID (if any) in the list of teacher IDs
-$allTeacherIds = [$teacherId];
-if ($leadTeacherId) {
-    $allTeacherIds[] = $leadTeacherId;
-}
-
-// Fetch teachers linked to the logged-in teacher (if they are a lead teacher)
-$linkedTeachersStmt = $pdo->prepare("
-    SELECT linked_teacher_id 
-    FROM teacher_links 
-    WHERE lead_teacher_id = ?
-");
-$linkedTeachersStmt->execute([$teacherId]);
-$linkedTeacherIds = $linkedTeachersStmt->fetchAll(PDO::FETCH_COLUMN);
-
-// Merge all relevant teacher IDs (logged-in teacher, lead teacher, and linked teachers)
-$allTeacherIds = array_merge($allTeacherIds, $linkedTeacherIds);
-
-// Fetch students linked to all relevant teachers
-$placeholders = implode(',', array_fill(0, count($allTeacherIds), '?'));
-$studentStmt = $pdo->prepare("
-    SELECT s.id, s.first_name, s.last_name 
-    FROM students s
-    WHERE s.teacher_id IN ($placeholders)
-");
-$studentStmt->execute($allTeacherIds);
-$students = $studentStmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Get the show_id from the query parameter
-$show_id = $_GET['show_id'] ?? null;
-if (!$show_id) {
-    die('No show selected. Please go back and select a show.');
-}
-
-// Fetch the show to ensure it exists
-$showStmt = $pdo->prepare("SELECT id, title FROM shows WHERE id = ?");
-$showStmt->execute([$show_id]);
-$show = $showStmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$show) {
-    die('Invalid show selected.');
-}
-
-$stage_name = '';
-$real_name = '';
-$errors = [];
+$error = '';
+$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stage_name = trim($_POST['stage_name']);
-    $real_name = trim($_POST['real_name']);
-    $student_id = $_POST['student_id'] ?? null;
+  $name = trim($_POST['name']);
+  $desc = trim($_POST['description']);
+  $actor_id = $_POST['actor_id'] ?: null;
 
-    if (empty($stage_name)) {
-        $errors[] = "Stage name is required.";
+  if ($name === '') {
+    $error = 'Character name is required.';
+  } else {
+    $stmt = $pdo->prepare("INSERT INTO characters (name, show_id, description) VALUES (?, ?, ?)");
+    $stmt->execute([$name, $show_id, $desc]);
+    $charId = $pdo->lastInsertId();
+
+    if ($actor_id) {
+      $stmt = $pdo->prepare("INSERT INTO casting (show_id, character_id, user_id) VALUES (?, ?, ?)");
+      $stmt->execute([$show_id, $charId, $actor_id]);
     }
 
-    // If a student is selected, fetch their full name
-    if ($student_id && $student_id !== 'manual') {
-        $studentStmt = $pdo->prepare("SELECT first_name, last_name FROM students WHERE id = ?");
-        $studentStmt->execute([$student_id]);
-        $student = $studentStmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($student) {
-            $real_name = $student['first_name'] . ' ' . $student['last_name'];
-        }
-    }
-
-    if (empty($errors)) {
-        // Insert character into the characters table
-        $stmt = $pdo->prepare("INSERT INTO characters (stage_name, real_name, show_id) VALUES (?, ?, ?)");
-        $stmt->execute([$stage_name, $real_name ?: null, $show_id]);
-        $characterId = $pdo->lastInsertId();
-        $stmt = $pdo->prepare("SELECT title FROM shows WHERE id = ?");
-        $stmt->execute([$show_id]);
-        $show = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // If a student is selected, link the character to the student
-        if ($student_id && $student_id !== 'manual') {
-            $stmt = $pdo->prepare("INSERT INTO studentcharacters (character_id, student_id) VALUES (?, ?)");
-            $stmt->execute([$characterId, $student_id]);
-            log_event("Character '$stage_name' (ID: $characterId) ($real_name) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
-        } else if ($student_id === 'manual' && !empty($real_name)) {
-            log_event("Character '$stage_name' (ID: $characterId) ($real_name) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
-        } else {
-            log_event("Character '$stage_name' (ID: $characterId) added to show {$show['title']} (ID: $show_id) by user '{$_SESSION['username']}'", 'INFO');
-        }
-
-        // Redirect back to the characters page for the selected show
-        header("Location: /characters/?show_id=$show_id");
-        exit;
-    }
+    $success = 'Character added successfully.';
+    header("Location: /characters/");
+  }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Add Character | <?=htmlspecialchars($config['site_title'])?></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
-    <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-6">Add New Character</h1>
-    <a href="/characters/?show_id=<?= $show_id ?>" class="text-blue-600 hover:underline mb-4">← Back to Character List</a>
 
-    <?php if ($errors): ?>
-      <div class="bg-red-100 text-red-700 border border-red-300 p-4 rounded mb-6">
-        <ul class="list-disc list-inside">
-          <?php foreach ($errors as $error): ?>
-            <li><?= htmlspecialchars($error) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-    <?php endif; ?>
 
-    <form method="POST" class="bg-white p-6 rounded-lg shadow border space-y-4">
+  <main class="flex-1 w-full max-w-6xl px-4 py-12 mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Add Character</h1>
+    <?php if ($error): ?><p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p><?php endif; ?>
+    <?php if ($success): ?><p class="text-green-600 mb-4"><?= htmlspecialchars($success) ?></p><?php endif; ?>
+
+    <form method="POST" class="bg-white p-6 rounded shadow space-y-4">
       <div>
-        <label for="stage_name" class="block font-medium mb-1">Stage Name *</label>
-        <input type="text" name="stage_name" id="stage_name" required value="<?= htmlspecialchars($stage_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
+        <label class="block font-semibold mb-1">Character Name</label>
+        <input type="text" name="name" class="w-full border rounded p-2" required>
       </div>
-
       <div>
-        <label for="student_id" class="block font-medium mb-1">Linked Student</label>
-        <select name="student_id" id="student_id" class="w-full border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]" onchange="toggleManualInput()">
-          <option value="">-- Select a Student --</option>
-          <?php foreach ($students as $student): ?>
-            <option value="<?= $student['id'] ?>"><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></option>
+        <label class="block font-semibold mb-1">Description</label>
+        <textarea name="description" class="w-full border rounded p-2" placeholder="e.g. The lead detective in Act 2"></textarea>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Assign Actor</label>
+        <select name="actor_id" class="w-full border rounded p-2">
+          <option value="">— None —</option>
+          <?php foreach ($cast as $c): ?>
+            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['full_name']) ?></option>
           <?php endforeach; ?>
-          <option value="manual">Other (Enter Manually)</option>
         </select>
       </div>
-
-      <div id="manual-input" class="hidden">
-        <label for="real_name" class="block font-medium mb-1">Real Name</label>
-        <input type="text" name="real_name" id="real_name" value="<?= htmlspecialchars($real_name) ?>"
-               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[<?= htmlspecialchars($config['highlight_colour']) ?>]">
-      </div>
-
-      <div>
-        <p class="text-sm text-gray-600">Adding character to show: <strong><?= htmlspecialchars($show['title']) ?></strong></p>
-      </div>
-
-      <div class="flex justify-end">
-        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-6 py-2 rounded hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
-          Add Character
-        </button>
-      </div>
+      <button type="submit" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Add Character</button>
     </form>
+
+    <div class="mt-4">
+      <a href="characters.php" class="text-blue-600 hover:underline">Back to Character List</a>
+    </div>
   </main>
-  <?php include '../footer.php'; ?>
-
-
-  <script>
-    function toggleManualInput() {
-      const studentSelect = document.getElementById('student_id');
-      const manualInput = document.getElementById('manual-input');
-      if (studentSelect.value === 'manual') {
-        manualInput.classList.remove('hidden');
-      } else {
-        manualInput.classList.add('hidden');
-        document.getElementById('real_name').value = ''; // Clear manual input
-      }
-    }
-  </script>
 </body>
 </html>
