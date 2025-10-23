@@ -1,6 +1,8 @@
-# Drama Manager 🎭
+# Theatre Management System 🎭
 
-The Drama Manager is a web-based application designed to streamline the management of drama productions. It provides tools for organizing shows, characters, props, costumes, scripts, and more, making it easier for teachers, students, and administrators to collaborate effectively.
+#README out of date
+
+Theatre Management System is a web-based application designed to streamline the management of drama productions. It provides tools for organizing shows, characters, props, costumes, scripts, and more, making it easier for teachers, students, and administrators to collaborate effectively.
 
 ---
 
