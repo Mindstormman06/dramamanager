@@ -169,17 +169,54 @@ switch ($routeParts[0]) {
         chdir($originalDir);
         break;
 
-    case 'schedule':
-        if (file_exists('schedule/schedule.php')) {
-            $originalDir = getcwd();
-            chdir('schedule');
-            include 'schedule.php';
-            chdir($originalDir);
+    case 'rehearsals':
+        $originalDir = getcwd();
+        chdir('rehearsals');
+        
+        if (isset($routeParts[1])) {
+            switch ($routeParts[1]) {
+                case 'add':
+                    if (file_exists('add_rehearsal.php')) {
+                        include 'add_rehearsal.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
+                    
+                case 'edit':
+                    if (file_exists('edit_rehearsal.php')) {
+                        include 'edit_rehearsal.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
+
+                case 'list':
+                    if (file_exists('rehearsals_feed.php')) {
+                        include 'rehearsals_feed.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
+                    
+                default:
+                    http_response_code(404);
+                    echo "404 - Page not found:";
+            }
         } else {
-            http_response_code(404);
-            echo "404 - Page not found";
+            if (file_exists('rehearsals.php')) {
+                include 'rehearsals.php';
+            } else {
+                http_response_code(404);
+                echo "404 - Page not found";
+            }
         }
-        break;
+        
+    chdir($originalDir);
+    break;
 
     case 'scripts':
         $originalDir = getcwd();

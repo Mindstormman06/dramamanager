@@ -21,7 +21,7 @@ include 'header.php';
     </a>
 
     <!-- Rehearsal Schedule -->
-    <a href="schedule/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
+    <a href="rehearsals/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
       <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">📅 Rehearsal Schedule</h2>
       <p class="text-gray-700">View upcoming rehearsals. Teachers can schedule new rehearsals and select participants.</p>
     </a>
