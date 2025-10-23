@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../backend/db.php';
 include '../header.php';
 
-$isTeacher = isset($_SESSION['role']) && $_SESSION['role'] === 'teacher';
+$isTeacher = isset($_SESSION['role']) && $_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager';
 $isStudent = isset($_SESSION['role']) && $_SESSION['role'] === 'student';
 $userId = $_SESSION['user_id'] ?? null;
 $username = $_SESSION['username'] ?? '';

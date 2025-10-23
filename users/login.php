@@ -21,27 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt = $pdo->prepare("SELECT * FROM students WHERE username = ?");
-        $stmt->execute([$username]);
-        $student = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($student) {
-            $stmt = $pdo->prepare("
-                SELECT r.name 
-                FROM student_roles sr
-                JOIN roles r ON sr.role_id = r.id
-                WHERE sr.student_id = ?
-            ");
-            $stmt->execute([$student['id']]);
-            $roles = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        }
-
 
         // Note: Check against 'password_hash' column
         if ($user && password_verify($password, $user['password_hash'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
-            $_SESSION['student_roles'] = $roles ?? null;
 
             log_event("User '{$user['username']}' logged in.", 'INFO');
         
@@ -111,8 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">Don't have an account?</p>
         <div class="flex justify-center gap-4 mt-2">
-            <a href="/register/student/" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Student Signup</a>
-            <a href="/register/teacher/" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded">Teacher Signup</a>
+            <a href="/register/user/" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Signup</a>
         </div>
     </div>
 

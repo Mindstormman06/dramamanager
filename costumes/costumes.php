@@ -63,7 +63,7 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <main class="flex-1 w-full max-w-6xl px-4 py-10 mx-auto">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">Costumes</h1>
-      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
         <a href="/costumes/add/" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] text-white px-4 py-2 rounded shadow hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] transition">
           + Add Costume
         </a>
@@ -82,7 +82,7 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <?php if (count($costumes) === 0): ?>
-      <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+      <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
       <div class="text-center py-10 text-gray-500 italic">
         No costumes found. Click <strong class="text-[<?= htmlspecialchars($config['text_colour']) ?>]">“Add Costume”</strong> to get started!
       </div>
@@ -122,7 +122,7 @@ $costumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <?php if (isset($c['show_titles'])): ?>
                 <p class="text-gray-700 text-sm leading-relaxed">Used In: <?= htmlspecialchars($c['show_titles']) ?></p>
               <?php endif; ?>
-              <?php if ($_SESSION['role'] === 'teacher' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
+              <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager' || $_SESSION['role'] === 'admin' || in_array($required_role, $_SESSION['student_roles'])) : ?>
                 <div class="flex gap-4 mt-2 text-sm">
                   <a href="/costumes/edit/?id=<?= $c['id'] ?>" class="text-blue-600 hover:underline">Edit</a>
                   <a href="../backend/costumes/delete_costume.php?id=<?= $c['id'] ?>" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this costume?');">Delete</a>

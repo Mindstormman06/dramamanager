@@ -68,10 +68,12 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             </button>
             <div id="user-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-white text-gray-800 rounded shadow-lg hidden z-50 border border-gray-200">
               <ul class="py-2 text-sm">
-                <?php if ($_SESSION['role'] === 'teacher'): ?>
+                <?php if ($_SESSION['role'] === 'director'): ?>
                   <li>
                     <a href="/link/" class="block px-4 py-2 hover:bg-gray-100">Link Teachers</a>
                   </li>
+                <?php endif; ?>
+                <?php if ($_SESSION['role'] === 'director' || $_SESSION['role'] === 'manager'): ?>  
                   <li>
                     <a href="/info/linked/" class="block px-4 py-2 hover:bg-gray-100">Class Management</a>
                   </li>

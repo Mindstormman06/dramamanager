@@ -322,18 +322,9 @@ switch ($routeParts[0]) {
         
         if (isset($routeParts[1])) {
             switch ($routeParts[1]) {
-                case 'teacher':
-                    if (file_exists('teacher_signup.php')) {
-                        include 'teacher_signup.php';
-                    } else {
-                        http_response_code(404);
-                        echo "404 - Page not found";
-                    }
-                    break;
-                    
-                case 'student':
-                    if (file_exists('student_signup.php')) {
-                        include 'student_signup.php';
+                case 'user':
+                    if (file_exists('signup.php')) {
+                        include 'signup.php';
                     } else {
                         http_response_code(404);
                         echo "404 - Page not found";
