@@ -28,21 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $notes = trim($_POST['notes']);
   $photo = null;
 
-  // Handle photo upload
-  if (!empty($_FILES['photo']['name'])) {
-    $targetDir = "../uploads/costumes/";
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-    $fileName = time() . '_' . basename($_FILES["photo"]["name"]);
-    $targetFile = $targetDir . $fileName;
-    move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
-    $photo = "/uploads/costumes/" . $fileName;
-  }
+  
 
   if ($photo === null) {
     $error = 'Please upload a costume photo.';
   } else if ($owner_id == null) {
     $error = 'Please select who the costume belongs to.';
   } else {
+    // Handle photo upload
+    if (!empty($_FILES['photo']['name'])) {
+      $targetDir = "../uploads/costumes/";
+      if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+      $fileName = time() . '_' . basename($_FILES["photo"]["name"]);
+      $targetFile = $targetDir . $fileName;
+      move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
+      $photo = "/uploads/costumes/" . $fileName;
+    }
     $stmt = $pdo->prepare("
       INSERT INTO assets (name, type, show_id, owner_id, notes, photo_url)
       VALUES (?, 'costume', ?, ?, ?, ?)

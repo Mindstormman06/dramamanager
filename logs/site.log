@@ -20,3 +20,14 @@
 [2025-10-23 22:01:15][104.128.242.242][INFO] Costume 'test' (ID: 4) deleted by user 'Aiden'
 [2025-10-23 22:01:19][104.128.242.242][INFO] Prop 'test' (ID: 5) deleted by user 'Aiden'
 [2025-10-23 23:50:07][104.128.242.242][INFO] User 'test<br>test' logged in.
+[2025-10-24 00:13:37][104.128.242.242][INFO] Prop 'test<br>test' (ID: 7) updated by user 'test<br>test'
+[2025-10-24 00:14:23][104.128.242.242][INFO] Prop 'test<br>test' (ID: 7) deleted by user 'test<br>test'
+[2025-10-24 00:17:02][104.128.242.242][INFO] Prop 'Unnamed Prop' (ID: 8) updated by user 'test<br>test'
+[2025-10-24 00:53:35][104.128.242.242][INFO] User 'test<br>test' logged in.
+[2025-10-24 00:59:24][104.128.242.242][INFO] User 'test<br>test' logged in.
+[2025-10-24 01:04:28][104.128.242.242][INFO] Costume 'Unnamed Costume' (ID: 9) deleted by user 'test<br>test'
+[2025-10-24 01:05:15][104.128.242.242][INFO] Costume 'Unnamed Costume' (ID: 10) deleted by user 'test<br>test'
+[2025-10-24 01:07:16][104.128.242.242][INFO] Prop 'Unnamed Prop' (ID: 11) deleted by user 'test<br>test'
+[2025-10-24 01:07:23][104.128.242.242][INFO] Prop 'Unnamed Prop' (ID: 8) deleted by user 'test<br>test'
+[2025-10-24 01:07:47][104.128.242.242][INFO] Prop 'Unnamed Prop' (ID: 12) deleted by user 'test<br>test'
+[2025-10-24 01:13:38][104.128.242.242][INFO] User 'test<br>test' logged in.
