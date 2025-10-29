@@ -1,6 +1,7 @@
 <?php
 include '../header.php';
-require_once __DIR__ . '/../backend/db.php';
+require_once __DIR__ . '/../backend/upload_image.php';
+
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['active_show'])) {
   header('Location: /login/');
@@ -30,27 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   
 
-  if ($photo === null) {
-    $error = 'Please upload a costume photo.';
-  } else if ($owner_id == null) {
+  if ($owner_id == null) {
     $error = 'Please select who the costume belongs to.';
   } else {
     // Handle photo upload
-    if (!empty($_FILES['photo']['name'])) {
-      $targetDir = "../uploads/costumes/";
-      if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-      $fileName = time() . '_' . basename($_FILES["photo"]["name"]);
-      $targetFile = $targetDir . $fileName;
-      move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
-      $photo = "/uploads/costumes/" . $fileName;
-    }
-    $stmt = $pdo->prepare("
-      INSERT INTO assets (name, type, show_id, owner_id, notes, photo_url)
-      VALUES (?, 'costume', ?, ?, ?, ?)
-    ");
-    $stmt->execute([$name ?: 'Unnamed Costume', $show_id, $owner_id, $notes, $photo]);
-    $success = 'Costume added successfully!';
-    header("Location: /costumes/");
+    $photo = handle_image_upload('photo', __DIR__.'/../uploads/costumes', '/uploads/costumes', $error);
+
+    if ($uploadErr) {
+        $error = $uploadErr; // re-render form with all fields preserved
+    } else {
+      $stmt = $pdo->prepare("
+        INSERT INTO assets (name, type, show_id, owner_id, notes, photo_url)
+        VALUES (?, 'costume', ?, ?, ?, ?)
+      ");
+      $stmt->execute([$name ?: 'Unnamed Costume', $show_id, $owner_id, $notes, $photo]);
+      $success = 'Costume added successfully!';
+      header("Location: /costumes/");
+      }
   }
 }
 ?>
@@ -64,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow space-y-4">
       <div>
         <label class="block font-semibold mb-1">Photo</label>
-        <input type="file" name="photo" accept="image/*" class="w-full border rounded p-2" required>
+        <input type="file" name="photo" id="photo" accept="image/*" class="w-full border rounded p-2">
+        <img id="preview" class="hidden mt-2 w-24 h-24 object-cover rounded border" alt="Preview">
       </div>
       <div>
         <label class="block font-semibold mb-1">Name (optional)</label>

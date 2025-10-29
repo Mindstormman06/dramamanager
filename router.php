@@ -13,15 +13,44 @@ switch ($routeParts[0]) {
         break;
 
     case 'album':
-        if (file_exists('album/album.php')) {
-            $originalDir = getcwd();
-            chdir('album');
-            include 'album.php';
-            chdir($originalDir);
+        $originalDir = getcwd();
+        chdir('album');
+        
+        if (isset($routeParts[1])) {
+            switch ($routeParts[1]) {
+                case 'upload':
+                    if (file_exists('add_media.php')) {
+                        include 'add_media.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
+                    
+                case 'delete':
+                    if (file_exists('../backend/album/delete_media.php')) {
+                        include '../backend/album/delete_media.php';
+                    } else {
+                        http_response_code(404);
+                        echo "404 - Page not found";
+                    }
+                    break;
+                    
+                    
+                default:
+                    http_response_code(404);
+                    echo "404 - Page not found:";
+            }
         } else {
-            http_response_code(404);
-            echo "404 - Page not found";
+            if (file_exists('album.php')) {
+                include 'album.php';
+            } else {
+                http_response_code(404);
+                echo "404 - Page not found";
+            }
         }
+        
+        chdir($originalDir);
         break;
 
     case 'bot':

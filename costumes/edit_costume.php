@@ -1,6 +1,7 @@
 <?php
 include '../header.php';
-require_once __DIR__ . '/../backend/db.php';
+require_once __DIR__ . '/../backend/upload_image.php';
+
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['active_show'])) {
   header('Location: /login/');
@@ -50,14 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $photo = $costume['photo_url'];
 
   // Handle new photo upload (optional)
-  if (!empty($_FILES['photo']['name'])) {
-    $targetDir = "../uploads/costumes/";
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-    $fileName = time() . '_' . basename($_FILES["photo"]["name"]);
-    $targetFile = $targetDir . $fileName;
-    move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
-    $photo = "/uploads/costumes/" . $fileName;
-  }
+  // if (!empty($_FILES['photo']['name'])) {
+  //   $targetDir = "../uploads/costumes/";
+  //   if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+  //   $fileName = time() . '_' . basename($_FILES["photo"]["name"]);
+  //   $targetFile = $targetDir . $fileName;
+  //   move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
+  //   $photo = "/uploads/costumes/" . $fileName;
+  // }
+
+  $photo = handle_image_upload('photo', __DIR__.'/../uploads/costumes', '/uploads/costumes', $error);
 
   if ($owner_id == null) {
     $error = 'Please select who the costume belongs to.';

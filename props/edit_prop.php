@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../backend/db.php';
+require_once __DIR__ . '/../backend/upload_image.php';
 include '../header.php';
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['active_show'])) {
@@ -49,24 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $photo = $prop['photo_url'];
 
   // Handle new photo upload (optional)
-  if (!empty($_FILES['photo']['name']) && is_uploaded_file($_FILES['photo']['tmp_name'])) {
-    $uploadDir = __DIR__ . '/../uploads/props/';
-    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-
-    $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-    $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-    $targetFile = $uploadDir . $filename;
-
-    if (@move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {
-      $photo = '/uploads/props/' . $filename;
-    } else {
-      $last = error_get_last();
-      log_event("Failed to move uploaded prop photo (edit): " . json_encode($last), 'ERROR');
-      $error = 'Failed to save uploaded photo.';
-    }
-  }
-
-  if ($error === '') {
+  $photo = handle_image_upload('photo', __DIR__.'/../uploads/props', '/uploads/props', $error);
+  
     if (empty($name)) $name = 'Unnamed Prop';
     $stmt = $pdo->prepare("
       UPDATE assets
@@ -79,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: /props/");
     exit;
-  }
+  
 }
 ?>
 <!DOCTYPE html>

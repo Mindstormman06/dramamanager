@@ -1,5 +1,6 @@
 <?php
 include '../header.php';
+require_once __DIR__ . '/../backend/upload_image.php';
 
 $user_id = $_SESSION['user_id'];
 $show_id = $_SESSION['active_show'];
@@ -23,7 +24,7 @@ $stmt->execute([$show_id]);
 $show = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$show) {
-    die('<p class="text-center text-red-600 mt-10 font-semibold">Show not found.</p>');
+    die('<p class="text-text-red-600 mt-10 font-semibold">Show not found.</p>');
 }
 
 $error = '';
@@ -84,39 +85,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unban_member'])) {
     $success = 'Member unbanned and restored to active status.';
 }
 
-// Handle photo upload
+// Handle photo upload (auto-submit from file input)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_photo'])) {
-    $memberId = $_POST['member_id'];
-    $showId = $show_id;
-
-    if (!empty($_FILES['photo']['name'])) {
-        $targetDir = "../uploads/show_photos/";
-        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-
-        $fileName = $showId . "_" . $memberId . "_" . time() . "_" . basename($_FILES["photo"]["name"]);
-        $targetFile = $targetDir . $fileName;
-        move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFile);
-        $photoUrl = "/uploads/show_photos/" . $fileName;
-
-        // Remove any existing photo for this user+show
-        $pdo->prepare("DELETE FROM show_user_photos WHERE show_id = ? AND user_id = ?")->execute([$showId, $memberId]);
-
-        // Save new photo
-        $stmt = $pdo->prepare("INSERT INTO show_user_photos (show_id, user_id, photo_url) VALUES (?, ?, ?)");
-        $stmt->execute([$showId, $memberId, $photoUrl]);
-
-        $success = 'Headshot uploaded successfully.';
+    $memberId = (int)($_POST['member_id'] ?? 0);
+    if ($memberId <= 0) {
+        $error = 'Invalid member.';
     } else {
-        $error = 'Please choose a file.';
+        $targetDirFs   = __DIR__ . '/../uploads/show_photos';
+        $publicBaseUrl = '/uploads/show_photos';
+        $photoUrl = handle_image_upload('photo', $targetDirFs, $publicBaseUrl, $uploadErr);
+
+        if ($uploadErr) {
+            $error = $uploadErr; // show inline, do not continue
+        } else if ($photoUrl) {
+            // Remove old entry, then insert new
+            $pdo->prepare("DELETE FROM show_user_photos WHERE show_id = ? AND user_id = ?")->execute([$show_id, $memberId]);
+            $pdo->prepare("INSERT INTO show_user_photos (show_id, user_id, photo_url) VALUES (?, ?, ?)")
+                ->execute([$show_id, $memberId, $photoUrl]);
+            $success = 'Headshot uploaded successfully.';
+        } else {
+            $error = 'Please choose an image to upload.';
+        }
     }
 }
 
 
 // Fetch all show members
 $stmt = $pdo->prepare("
-    SELECT u.id, u.username, u.email, su.role, su.banned
+    SELECT u.id, u.username, u.email, su.role, su.banned, sup.photo_url
     FROM show_users su
     JOIN users u ON su.user_id = u.id
+    LEFT JOIN show_user_photos sup ON sup.show_id = su.show_id AND sup.user_id = su.user_id
     WHERE su.show_id = ?
     ORDER BY su.role, u.username
 ");
@@ -195,13 +194,26 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
               </td>
               <td class="px-4 py-2 text-center align-top">
                 <?php if (!$member['banned']): ?>
-                  <form method="POST" class="inline upload-form" enctype="multipart/form-data">
-                    <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
-                    <label class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-xs cursor-pointer inline-block">
-                      Upload
-                      <input type="file" name="photo" accept="image/*" class="hidden upload-input">
-                    </label>
-                  </form>
+                  <td class="px-4 py-2 text-center align-top">
+                    <?php if (!empty($member['photo_url'])): ?>
+                      <img src="<?= htmlspecialchars($member['photo_url']) ?>" alt="Headshot"
+                          class="mx-auto mb-2 w-12 h-12 object-cover rounded-full border" />
+                    <?php else: ?>
+                      <div class="mx-auto mb-2 w-12 h-12 rounded-full bg-gray-200 grid place-items-center text-gray-500">👤</div>
+                    <?php endif; ?>
+
+                    <form method="POST" class="inline upload-form" enctype="multipart/form-data">
+                      <input type="hidden" name="member_id" value="<?= (int)$member['id'] ?>">
+                      <input type="hidden" name="upload_photo" value="1">
+                      <label class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-xs cursor-pointer inline-block">
+                        Upload
+                        <input type="file" name="photo" id="photo-<?= (int)$member['id'] ?>" accept="image/*" class="hidden upload-input">
+                      </label>
+                    </form>
+
+                    <img id="preview-<?= (int)$member['id'] ?>" class="hidden mx-auto mt-2 w-12 h-12 object-cover rounded-full border" alt="Preview"/>
+                  </td>
+
                 <?php endif; ?>
               </td>
               <td class="px-4 py-2 text-center space-x-2 align-top">
