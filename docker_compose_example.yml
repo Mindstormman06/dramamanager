@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  web:
+    image: aidenadzich/dramamanager:latest
+    container_name: dramamanager_web
+    ports:
+      - "9079:80"
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./logs:/var/www/html/logs
+      - ./config:/var/www/html/backend/config
+    depends_on:
+      db:
+          condition: service_healthy
+    environment:
+      # Database values
+      DB_HOST: db
+      DB_NAME: dramamanager
+      DB_USER: dramamanager
+      DB_PASS: dramapass
+      DB_CHARSET: utf8mb4
+      # Discord Bot values
+      DISCORD_TOKEN: 
+      GUILD_ID: 
+      SCHEDULE_CHANNEL_ID: 
+      SCHEDULE_PINGS: "true"
+      CHANGELOG_PINGS: "true"
+      CHANGELOG_CHANNEL_ID: 
+      ADMIN_PASSWORD: changeme
+    entrypoint: "/var/www/html/docker-entrypoint.sh"
+    restart: unless-stopped
+
+  db:
+    image: aidenadzich/dramamanager-db:latest
+    container_name: dramamanager_db
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: dramamanager
+      MYSQL_USER: dramamanager
+      MYSQL_PASSWORD: dramapass
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
