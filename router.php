@@ -53,18 +53,6 @@ switch ($routeParts[0]) {
         chdir($originalDir);
         break;
 
-    case 'bot':
-        if (file_exists('bot/bot_settings.php')) {
-            $originalDir = getcwd();
-            chdir('bot');
-            include 'bot_settings.php';
-            chdir($originalDir);
-        } else {
-            http_response_code(404);
-            echo "404 - Page not found";
-        }
-        break;
-
     case 'characters':
         $originalDir = getcwd();
         chdir('characters');
@@ -144,18 +132,6 @@ switch ($routeParts[0]) {
         }
         
         chdir($originalDir);
-        break;
-
-    case 'ideas':
-        if (file_exists('ideas/ideas.php')) {
-            $originalDir = getcwd();
-            chdir('ideas');
-            include 'ideas.php';
-            chdir($originalDir);
-        } else {
-            http_response_code(404);
-            echo "404 - Page not found";
-        }
         break;
 
     case 'props':
@@ -247,42 +223,6 @@ switch ($routeParts[0]) {
     chdir($originalDir);
     break;
 
-    case 'scripts':
-        $originalDir = getcwd();
-        chdir('scripts');
-        
-        if (isset($routeParts[1])) {
-            switch ($routeParts[1]) {
-                case 'add':
-                    if (file_exists('analyze_script.php')) {
-                        include 'analyze_script.php';
-                    } else {
-                        http_response_code(404);
-                        echo "404 - Page not found";
-                    }
-                    break;
-                    
-                case 'show':
-                    if (file_exists('create_show_from_script.php')) {
-                        include 'create_show_from_script.php';
-                    } else {
-                        http_response_code(404);
-                        echo "404 - Page not found";
-                    }
-                    break;
-                    
-                default:
-                    http_response_code(404);
-                    echo "404 - Page not found:";
-            }
-        } else {
-            http_response_code(404);
-            echo "404 - Page not found";
-        }
-        
-        chdir($originalDir);
-        break;
-
     case 'shows':
         $originalDir = getcwd();
         chdir('shows');
@@ -335,11 +275,23 @@ switch ($routeParts[0]) {
         }
         break;
 
-    case 'link':
-        if (file_exists('users/link_teachers.php')) {
+    case 'signup':
+        if (file_exists('users/signup.php')) {
             $originalDir = getcwd();
             chdir('users');
-            include 'link_teachers.php';
+            include 'signup.php';
+            chdir($originalDir);
+        } else {
+            http_response_code(404);
+            echo "404 - Page not found";
+        }
+        break;
+
+    case 'reset_password':
+        if (file_exists('users/reset_password.php')) {
+            $originalDir = getcwd();
+            chdir('users');
+            include 'reset_password.php';
             chdir($originalDir);
         } else {
             http_response_code(404);

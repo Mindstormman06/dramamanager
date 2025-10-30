@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/session_bootstrap.php';
 include 'header.php';
 ?>
 
@@ -53,15 +54,11 @@ include 'header.php';
 
     <!-- Site/bot Settings (admin) -->
     <?php if ($_SESSION['user_role'] == 'admin'): ?>
-      <a href="bot/" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">🤖 Bot Settings</h2>
-      <p class="text-gray-700">Manage Discord bot channels and notification settings.</p>
-    </a>
-    
-    <a href="/admin/site_settings.php" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
-      <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">⚙️ Site Settings</h2>
-      <p class="text-gray-700">Manage site colours, title, and upload the site logo.</p>
-    </a>
+
+      <a href="/admin/site_settings.php" class="bg-white rounded-xl border border-gray-200 shadow hover:shadow-md p-6 transition hover:-translate-y-1 hover:bg-[#FBEFEF]">
+        <h2 class="text-xl font-semibold text-[<?= htmlspecialchars($config['text_colour']) ?>] mb-2">⚙️ Site Settings</h2>
+        <p class="text-gray-700">Manage site colours, title, and upload the site logo.</p>
+      </a>
     
     <?php endif; ?>
 

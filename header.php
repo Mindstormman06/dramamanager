@@ -1,10 +1,15 @@
 <?php
+require_once __DIR__ . '/session_bootstrap.php';
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+header('Expires: 0');
 require_once 'backend/db.php';
 require 'backend/users/auth.php';
 require_once 'log.php';
 $config = require __DIR__ . '/backend/load_site_config.php';
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+
+
 
 if (isset($_SESSION['user_id'])) {
     $currentPage = basename($_SERVER['PHP_SELF']);
@@ -16,6 +21,10 @@ if (isset($_SESSION['user_id'])) {
     }
 
 }
+
+$button = htmlspecialchars($config['button_colour'] ?? '#ef4444');
+$buttonHover = htmlspecialchars($config['button_hover_colour'] ?? '#dc2626');
+$textColour = htmlspecialchars($config['text_colour'] ?? '#111827');
 ?>
 
 <!DOCTYPE html>
@@ -24,9 +33,9 @@ if (isset($_SESSION['user_id'])) {
   <title><?=htmlspecialchars($config['site_title'])?> Portal</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="shortcut icon" href="/assets/favicon.ico?v=<?php echo md5_file('/assets/favicon.ico') ?>" />
+  <link rel="manifest" href="/assets/site.webmanifest">
+  <link rel="stylesheet" href="/assets/styles.css">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
@@ -60,13 +69,6 @@ if (isset($_SESSION['user_id'])) {
         <a href="/" class="text-2xl font-bold hover:text-[<?= $config['header_text_hover'] ?>] transition-colors">
           <?= htmlspecialchars($config['site_title']) ?>
         </a>
-
-        <?php if (isset($_SESSION['active_show'])): ?>
-          <div class="text-sm text-gray-600">
-            Active Show: <strong><?= htmlspecialchars($_SESSION['active_show_name'] ?? '') ?></strong>
-          </div>
-        <?php endif; ?>
-
       </div>
 
       <div class="relative flex items-center gap-4">

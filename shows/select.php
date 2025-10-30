@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['select_show'])) {
             $_SESSION['active_show'] = $show_id;
             $_SESSION['active_show_name'] = $show['title'];
             $_SESSION['role'] = $show['role'];
+            session_write_close();
             header('Location: /index.php');
             exit;
         } else {
@@ -70,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_show'])) {
         $_SESSION['active_show'] = $newShowId;
         $_SESSION['active_show_name'] = $title;
         $_SESSION['role'] = $creatorRole;
-
+        session_write_close();
         header('Location: /index.php');
         exit;
     }
@@ -109,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_show'])) {
                 $_SESSION['active_show'] = $show['id'];
                 $_SESSION['active_show_name'] = $show['title'];
                 $_SESSION['role'] = 'cast';
-
+                session_write_close();
                 header('Location: /index.php');
                 exit;
             }

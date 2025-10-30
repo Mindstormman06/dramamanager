@@ -39,58 +39,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$button = htmlspecialchars($config['button_colour'] ?? '#ef4444');
+$buttonHover = htmlspecialchars($config['button_hover_colour'] ?? '#dc2626');
+$textColour = htmlspecialchars($config['text_colour'] ?? '#111827');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Signup | <?=htmlspecialchars($config['site_title'])?></title>
+  <title>Sign Up | <?= htmlspecialchars($config['site_title']) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
-  <link rel="manifest" href="/site.webmanifest">
+  <style>
+    @media (max-width: 640px) {
+      body { font-size: 0.95rem; padding: 0.5rem; }
+      input, select, textarea, button { font-size: 1rem !important; padding: 0.6rem !important; }
+      .flex, .grid { flex-direction: column; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4 text-[<?= htmlspecialchars($config['text_colour']) ?>]">Signup</h1>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4">
+  <main class="w-full max-w-sm bg-white rounded-xl shadow-md p-6 sm:p-8">
+    <h1 class="text-2xl font-bold text-center text-[<?= $textColour ?>] mb-6">Create Account</h1>
 
     <?php if ($error): ?>
-      <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
+      <p class="text-red-600 text-center mb-4"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <?php if ($success): ?>
-      <!-- Success Message -->
-      <p class="text-green-600 mb-4"><?= $success ?></p>
-      <a href="/login/" class="bg-blue-700 hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Go to Login</a>
+      <p class="text-green-600 text-center mb-4"><?= htmlspecialchars($success) ?></p>
+      <div class="text-center mb-6">
+        <a href="/login/" class="text-[<?= $button ?>] hover:underline font-medium">Go to Login</a>
+      </div>
     <?php else: ?>
-        <!-- Signup Form -->
-        <form method="POST" id="signup-form" class="space-y-4">
-          <div>
-            <label class="block font-semibold">Username</label>
-            <input type="text" name="username" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <div>
-            <label class="block font-semibold">First Name</label>
-            <input type="text" name="first_name" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <div>
-            <label class="block font-semibold">Last Name</label>
-            <input type="text" name="last_name" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <div>
-            <label class="block font-semibold">Email</label>
-            <input type="email" name="email" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <div>
-            <label class="block font-semibold">Password</label>
-            <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <div>
-            <label class="block font-semibold">Confirm Password</label>
-            <input type="password" name="confirm_password" class="w-full border border-gray-300 rounded p-2" required>
-          </div>
-          <button type="submit" name="signup_submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Sign Up</button>
-        </form>
+      <form method="POST" class="space-y-4">
+        <div>
+          <label class="block font-semibold mb-1">Username</label>
+          <input type="text" name="username" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Email</label>
+          <input type="email" name="email" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Password</label>
+          <input type="password" name="password" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Confirm Password</label>
+          <input type="password" name="confirm" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+        </div>
+
+        <button type="submit" name="signup"
+          class="w-full bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white py-3 rounded-lg text-lg font-semibold shadow transition">
+          Sign Up
+        </button>
+
+        <div class="text-center text-sm text-gray-600 mt-3">
+          Already have an account?
+          <a href="/login/" class="text-[<?= $button ?>] hover:underline font-medium">Login</a>
+        </div>
+      </form>
     <?php endif; ?>
   </main>
 </body>

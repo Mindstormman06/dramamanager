@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_media'])) {
     ]);
 
     $success = 'Media uploaded successfully!';
-    header('Location: /album/');
+    header('Location: https://dev.qssdrama.site/album/');
 
     // Reset form
     $label = '';

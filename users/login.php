@@ -1,5 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/../session_bootstrap.php';
 require_once __DIR__ . '/../backend/db.php';
 require_once __DIR__ . '/../log.php';
 $config = require '../backend/load_site_config.php';
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_role'] = $user['role'];
-
+            session_write_close();
             log_event("User '{$user['username']}' logged in.", 'INFO');
         
             if (!empty($_POST['remember'])) {
@@ -49,63 +49,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+$button = htmlspecialchars($config['button_colour'] ?? '#ef4444');
+$buttonHover = htmlspecialchars($config['button_hover_colour'] ?? '#dc2626');
+$textColour = htmlspecialchars($config['text_colour'] ?? '#111827');
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login | <?=htmlspecialchars($config['site_title'])?></title>
+  <title>Login | <?= htmlspecialchars($config['site_title']) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="/favicon.ico?v=<?php echo md5_file('/favicon.ico') ?>" />
-  <link rel="manifest" href="/site.webmanifest">
-
+  <style>
+    @media (max-width: 640px) {
+      body { font-size: 0.95rem; padding: 0.5rem; }
+      input, select, textarea, button { font-size: 1rem !important; padding: 0.6rem !important; }
+      .flex, .grid { flex-direction: column; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
-    <div class="flex items-center gap-3 pb-4">
-        <a href="/"><img src="/assets/logo.png" alt="QSS Logo" class="h-10" /></a>
-        <p class="text-2xl font-bold text-[<?= htmlspecialchars($config['text_colour']) ?>]">
-            <?=htmlspecialchars($config['site_title'])?>
-        </a>
-    </div>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4">
+  <main class="w-full max-w-sm bg-white rounded-xl shadow-md p-6 sm:p-8">
+    <h1 class="text-2xl font-bold text-center text-[<?= $textColour ?>] mb-6">Login</h1>
 
     <?php if ($error): ?>
-        <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
+      <p class="text-red-600 text-center mb-4"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <form method="POST" class="space-y-4">
-        <div>
-            <label class="block font-semibold">Username</label>
-            <input type="text" name="username" class="w-full border border-gray-300 rounded p-2" required>
-        </div>
-        <div>
-            <label class="block font-semibold">Password</label>
-            <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
-        </div>
-        <div class="flex items-center">
-            <input type="checkbox" name="remember" id="remember" class="mr-2">
-            <label for="remember" class="text-sm">Remember Me</label>
-        </div>
+      <div>
+        <label class="block font-semibold mb-1">Username or Email</label>
+        <input type="text" name="username" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+      </div>
 
-        <button type="submit" class="bg-[<?= htmlspecialchars($config['button_colour']) ?>] hover:bg-[<?= htmlspecialchars($config['button_hover_colour']) ?>] text-white px-4 py-2 rounded">Login</button>
+      <div>
+        <label class="block font-semibold mb-1">Password</label>
+        <input type="password" name="password" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
+      </div>
+
+      <button type="submit" name="login"
+        class="w-full bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white py-3 rounded-lg text-lg font-semibold shadow transition">
+        Sign In
+      </button>
+
+      <div class="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600 mt-3">
+        <a href="/signup/" class="hover:underline">Create Account</a>
+        <a href="/reset_password/" class="hover:underline mt-2 sm:mt-0">Forgot Password?</a>
+      </div>
     </form>
-
-    <!-- Signup Buttons -->
-    <div class="mt-6 text-center">
-        <p class="text-sm text-gray-600">Don't have an account?</p>
-        <div class="flex justify-center gap-4 mt-2">
-            <a href="/register/user/" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">Signup</a>
-        </div>
-    </div>
-
-    <div class="mt-6 text-center">
-      <p class="text-sm text-gray-600">Forgot your password?</p>
-      <a href="/register/reset/" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded mt-2 inline-block">
-        Reset Password
-      </a>
-    </div>
   </main>
 </body>
 </html>

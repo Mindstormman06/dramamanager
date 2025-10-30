@@ -1,0 +1,10 @@
+@media (max-width: 640px) {
+    body { font-size: 0.95rem; padding: 0.5rem; }
+    input, select, textarea, button {
+    font-size: 1rem !important;
+    padding: 0.6rem !important;
+    }
+    .grid, .flex {
+    flex-direction: column;
+    }
+}

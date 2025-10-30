@@ -5,7 +5,7 @@ require_once __DIR__ . '/../log.php';
 include __DIR__ . '/../header.php';
 
 // Require admin
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+if (!isset($_SESSION['user_id']) || ($_SESSION['user_role'] ?? '') !== 'admin') {
     header('Location: /');
     exit;
 }

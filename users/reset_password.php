@@ -109,51 +109,57 @@ if (isset($_GET['token'])) {
         }
     }
 }
+
+$button = htmlspecialchars($config['button_colour'] ?? '#ef4444');
+$buttonHover = htmlspecialchars($config['button_hover_colour'] ?? '#dc2626');
+$textColour = htmlspecialchars($config['text_colour'] ?? '#111827');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Reset Password | <?=htmlspecialchars($config['site_title'])?></title>
+  <title>Reset Password | <?= htmlspecialchars($config['site_title']) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media (max-width: 640px) {
+      body { font-size: 0.95rem; padding: 0.5rem; }
+      input, button { font-size: 1rem !important; padding: 0.6rem !important; }
+      .flex, .grid { flex-direction: column; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4">🎭 Reset Password</h1>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4">
+  <main class="w-full max-w-sm bg-white rounded-xl shadow-md p-6 sm:p-8">
+    <h1 class="text-2xl font-bold text-center text-[<?= $textColour ?>] mb-6">Reset Password</h1>
 
     <?php if ($error): ?>
-      <p class="text-red-600 mb-4"><?= htmlspecialchars($error) ?></p>
+      <p class="text-red-600 text-center mb-4"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <?php if ($success): ?>
-      <p class="text-green-600 mb-4"><?= htmlspecialchars($success) ?></p>
-      <a href="/login/" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded">Go to Login</a>
-    <?php endif; ?>
-
-    <?php if ($step === 1 && !$success): ?>
+      <p class="text-green-600 text-center mb-6"><?= htmlspecialchars($success) ?></p>
+      <div class="text-center">
+        <a href="/login/" class="text-[<?= $button ?>] hover:underline font-medium">Return to Login</a>
+      </div>
+    <?php else: ?>
       <form method="POST" class="space-y-4">
         <div>
-          <label class="block font-semibold">Email</label>
-          <input type="email" name="email" class="w-full border border-gray-300 rounded p-2" required>
+          <label class="block font-semibold mb-1">Email Address</label>
+          <input type="email" name="email" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[<?= $button ?>]" required>
         </div>
-        <button type="submit" name="request_reset" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Send Reset Link</button>
-      </form>
 
-    <?php elseif ($step === 2 && !$success): ?>
-      <form method="POST" class="space-y-4">
-        <div>
-          <label class="block font-semibold">New Password</label>
-          <input type="password" name="password" class="w-full border border-gray-300 rounded p-2" required>
+        <button type="submit" name="reset_request"
+          class="w-full bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white py-3 rounded-lg text-lg font-semibold shadow transition">
+          Send Reset Link
+        </button>
+
+        <div class="text-center text-sm text-gray-600 mt-3">
+          <a href="/login/" class="text-[<?= $button ?>] hover:underline font-medium">Back to Login</a>
         </div>
-        <div>
-          <label class="block font-semibold">Confirm Password</label>
-          <input type="password" name="confirm_password" class="w-full border border-gray-300 rounded p-2" required>
-        </div>
-        <button type="submit" name="reset_password" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Reset Password</button>
       </form>
     <?php endif; ?>
-
   </main>
 </body>
 </html>

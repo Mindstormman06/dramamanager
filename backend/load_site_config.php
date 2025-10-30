@@ -18,6 +18,7 @@ $defaults = [
     'footer_bg_colour' => '#254678',
     'footer_text' => '#8a8a8a',
     'admin_creation_key' => 'changeme',
+    'upload_base_url' => 'upload.qssdrama.site',
 ];
 
 // Ensure config directory exists

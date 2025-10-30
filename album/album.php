@@ -73,7 +73,7 @@ $border = htmlspecialchars($config['border_colour'] ?? '#ef4444');
       <h1 class="text-3xl font-bold text-[<?= $textColour ?>]">📸 Show Album</h1>
       <div class="flex gap-2">
         <?php if ($is_manager): ?>
-          <a href="/album/upload/" class="bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white px-4 py-2 rounded shadow transition">+ Add Media</a>
+          <a href="https://<?=$config['upload_base_url']?>/album/upload/" class="bg-[<?= $button ?>] hover:bg-[<?= $buttonHover ?>] text-white px-4 py-2 rounded shadow transition">+ Add Media</a>
         <?php endif; ?>
       </div>
     </div>
