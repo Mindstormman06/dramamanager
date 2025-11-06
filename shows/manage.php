@@ -30,6 +30,57 @@ if (!$show) {
 $error = '';
 $success = '';
 
+// Create temporary user
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_temp_user'])) {
+    $tempName = trim($_POST['temp_username']);
+    $tempEmail = trim($_POST['temp_email'] ?? '');
+
+    if ($tempName === '') {
+        $error = 'Temporary user must have a name.';
+    } else {
+        $pdo->prepare("INSERT INTO users (username, email, password, is_temporary) VALUES (?, ?, '', 1)")
+            ->execute([$tempName, $tempEmail]);
+
+        $tempId = $pdo->lastInsertId();
+        $pdo->prepare("INSERT INTO show_users (show_id, user_id, role) VALUES (?, ?, 'guest')")
+            ->execute([$show_id, $tempId]);
+
+        $success = 'Temporary user created and added to this show.';
+    }
+}
+
+// Merge temporary user into a real user
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['merge_user'])) {
+    $tempId = (int)$_POST['temp_user_id'];
+    $realId = (int)$_POST['real_user_id'];
+
+    try {
+        $pdo->beginTransaction();
+
+        // Move show memberships
+        $pdo->prepare("UPDATE IGNORE show_users SET user_id = ? WHERE user_id = ?")->execute([$realId, $tempId]);
+
+        // Move photos
+        $pdo->prepare("UPDATE IGNORE show_user_photos SET user_id = ? WHERE user_id = ?")->execute([$realId, $tempId]);
+
+        $pdo->prepare("UPDATE IGNORE assets SET owner_id = ? WHERE owner_id = ?")->execute([$realId, $tempId]);
+
+        $pdo->prepare("UPDATE IGNORE casting SET user_id = ? WHERE user_id = ?")->execute([$realId, $tempId]);
+
+        $pdo->prepare("UPDATE IGNORE rehearsal_attendees SET user_id = ? WHERE user_id = ?")->execute([$realId, $tempId]);
+
+        // Delete old temp user
+        $pdo->prepare("DELETE FROM users WHERE id = ? AND is_temporary = 1")->execute([$tempId]);
+
+        $pdo->commit();
+        $success = 'Temporary user merged successfully.';
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $error = 'Merge failed: ' . $e->getMessage();
+    }
+}
+
+
 // Update show info
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_show'])) {
     $newTitle = trim($_POST['title'] ?? '');
@@ -121,6 +172,8 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$show_id]);
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$realUsers = $pdo->query("SELECT id, username, email FROM users WHERE is_temporary = 0 ORDER BY username")->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,6 +208,22 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     </form>
 
+    <!-- Create Temporary User -->
+    <form method="POST" class="mb-6 flex flex-wrap gap-2 items-end">
+      <div>
+        <label class="block font-semibold mb-1">Temporary Username</label>
+        <input type="text" name="temp_username" class="border border-gray-300 rounded p-2" placeholder="Name" required>
+      </div>
+      <div>
+        <label class="block font-semibold mb-1">Email (optional)</label>
+        <input type="email" name="temp_email" class="border border-gray-300 rounded p-2" placeholder="example@email.com">
+      </div>
+      <button type="submit" name="create_temp_user" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded">
+        ➕ Add Temporary User
+      </button>
+    </form>
+
+
     <!-- Members Table -->
     <h2 class="text-2xl font-semibold mb-4">👥 Members</h2>
     <div class="overflow-x-auto">
@@ -171,11 +240,16 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <tbody>
           <?php foreach ($members as $member): ?>
             <tr class="border-b <?= $member['banned'] ? 'bg-red-50' : '' ?>">
+              <!-- Username -->
               <td class="px-4 py-2"><?= htmlspecialchars($member['username']) ?></td>
+
+              <!-- Email -->
               <td class="px-4 py-2 text-gray-600"><?= htmlspecialchars($member['email']) ?></td>
+
+              <!-- Role -->
               <td class="px-4 py-2">
                 <?php if (!$member['banned']): ?>
-                  <form method="POST" class="flex gap-2">
+                  <form method="POST" class="flex gap-2 items-center">
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
                     <select name="role" class="border border-gray-300 rounded p-1 text-sm">
                       <?php
@@ -192,30 +266,30 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <span class="text-gray-500 italic">N/A</span>
                 <?php endif; ?>
               </td>
+
+              <!-- Headshot -->
               <td class="px-4 py-2 text-center align-top">
+                <?php if (!empty($member['photo_url'])): ?>
+                  <img src="<?= htmlspecialchars($member['photo_url']) ?>" alt="Headshot"
+                      class="mx-auto mb-2 w-12 h-12 object-cover rounded-full border" />
+                <?php else: ?>
+                  <div class="mx-auto mb-2 w-12 h-12 rounded-full bg-gray-200 grid place-items-center text-gray-500">👤</div>
+                <?php endif; ?>
+
                 <?php if (!$member['banned']): ?>
-                  <td class="px-4 py-2 text-center align-top">
-                    <?php if (!empty($member['photo_url'])): ?>
-                      <img src="<?= htmlspecialchars($member['photo_url']) ?>" alt="Headshot"
-                          class="mx-auto mb-2 w-12 h-12 object-cover rounded-full border" />
-                    <?php else: ?>
-                      <div class="mx-auto mb-2 w-12 h-12 rounded-full bg-gray-200 grid place-items-center text-gray-500">👤</div>
-                    <?php endif; ?>
-
-                    <form method="POST" class="inline upload-form" enctype="multipart/form-data">
-                      <input type="hidden" name="member_id" value="<?= (int)$member['id'] ?>">
-                      <input type="hidden" name="upload_photo" value="1">
-                      <label class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-xs cursor-pointer inline-block">
-                        Upload
-                        <input type="file" name="photo" id="photo-<?= (int)$member['id'] ?>" accept="image/*" class="hidden upload-input">
-                      </label>
-                    </form>
-
-                    <img id="preview-<?= (int)$member['id'] ?>" class="hidden mx-auto mt-2 w-12 h-12 object-cover rounded-full border" alt="Preview"/>
-                  </td>
-
+                  <form method="POST" class="inline upload-form" enctype="multipart/form-data">
+                    <input type="hidden" name="member_id" value="<?= (int)$member['id'] ?>">
+                    <input type="hidden" name="upload_photo" value="1">
+                    <label class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-xs cursor-pointer inline-block">
+                      Upload
+                      <input type="file" name="photo" id="photo-<?= (int)$member['id'] ?>" accept="image/*" class="hidden upload-input">
+                    </label>
+                  </form>
+                  <img id="preview-<?= (int)$member['id'] ?>" class="hidden mx-auto mt-2 w-12 h-12 object-cover rounded-full border" alt="Preview"/>
                 <?php endif; ?>
               </td>
+
+              <!-- Actions -->
               <td class="px-4 py-2 text-center space-x-2 align-top">
                 <?php if (!$member['banned']): ?>
                   <form method="POST" class="inline">
@@ -226,6 +300,19 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
                     <button type="submit" name="ban_member" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded text-sm">Ban</button>
                   </form>
+                  <?php if ($member['is_temporary']): ?>
+                  <button type="button"
+                          class="bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 rounded text-sm"
+                          onclick="openMergePopup(<?= $member['id'] ?>, '<?= htmlspecialchars($member['username'], ENT_QUOTES) ?>')">
+                    Merge
+                  </button>
+                <?php else: ?>
+                  <form method="POST" class="inline">
+                    <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
+                    <button type="submit" name="remove_member" class="bg-yellow-500 hover:bg-yellow-400 text-white px-2 py-1 rounded text-sm">Remove</button>
+                  </form>
+                <?php endif; ?>
+
                 <?php else: ?>
                   <form method="POST" class="inline">
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
@@ -236,6 +323,7 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tr>
           <?php endforeach; ?>
         </tbody>
+
       </table>
     </div>
 
@@ -268,5 +356,45 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
       });
     });
   </script>
+
+  <!-- Merge Popup -->
+  <div id="mergePopup" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+      <h3 class="text-lg font-semibold mb-4">Merge Temporary User</h3>
+      <p class="mb-4 text-sm text-gray-600">
+        Merge <span id="mergeUsername" class="font-bold"></span> into:
+      </p>
+      <form method="POST">
+        <input type="hidden" name="merge_user" value="1">
+        <input type="hidden" name="temp_user_id" id="tempUserId">
+        <select name="real_user_id" class="w-full border border-gray-300 rounded p-2 mb-4" required>
+          <option value="">Select a real user...</option>
+          <?php foreach ($realUsers as $real): ?>
+            <option value="<?= $real['id'] ?>">
+              <?= htmlspecialchars($real['username']) ?> (<?= htmlspecialchars($real['email']) ?>)
+            </option>
+          <?php endforeach; ?>
+        </select>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeMergePopup()" class="bg-gray-300 px-3 py-1 rounded">Cancel</button>
+          <button type="submit" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded">Merge</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openMergePopup(tempId, username) {
+      document.getElementById('mergePopup').classList.remove('hidden');
+      document.getElementById('mergePopup').classList.add('flex');
+      document.getElementById('mergeUsername').innerText = username;
+      document.getElementById('tempUserId').value = tempId;
+    }
+    function closeMergePopup() {
+      document.getElementById('mergePopup').classList.add('hidden');
+      document.getElementById('mergePopup').classList.remove('flex');
+    }
+  </script>
+
 </body>
 </html>
