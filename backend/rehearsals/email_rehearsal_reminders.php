@@ -70,7 +70,7 @@ foreach ($rehearsals as $r) {
 
         $body .= "
             <hr style='border:none;border-top:1px solid #eee;margin:20px 0;'>
-            <p style='font-size:12px;color:#999;text-align:center;'>This reminder was sent automatically from Drama Manager.</p>
+            <p style='font-size:12px;color:#999;text-align:center;'>This reminder was sent automatically from Theatre Manager.</p>
           </div>
         </div>
         ";

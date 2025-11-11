@@ -38,11 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_temp_user'])) 
     if ($tempName === '') {
         $error = 'Temporary user must have a name.';
     } else {
-        $pdo->prepare("INSERT INTO users (username, email, password, is_temporary) VALUES (?, ?, '', 1)")
-            ->execute([$tempName, $tempEmail]);
+        $username = str_replace(' ', '', $tempName);
+
+        $pdo->prepare("INSERT INTO users (full_name, username, email, password_hash, is_temporary) VALUES (?, ?, ?, '', 1)")
+            ->execute([$tempName, $username, $tempEmail]);
 
         $tempId = $pdo->lastInsertId();
-        $pdo->prepare("INSERT INTO show_users (show_id, user_id, role) VALUES (?, ?, 'guest')")
+        $pdo->prepare("INSERT INTO show_users (show_id, user_id, role, is_temporary) VALUES (?, ?, 'guest', 1)")
             ->execute([$show_id, $tempId]);
 
         $success = 'Temporary user created and added to this show.';
@@ -160,10 +162,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_photo'])) {
     }
 }
 
+// ✅ Remove temporary user completely
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_temp_user'])) {
+    $tempId = (int)$_POST['temp_user_id'];
+    
+    // Verify it's actually a temporary user
+    $stmt = $pdo->prepare("SELECT is_temporary FROM users WHERE id = ?");
+    $stmt->execute([$tempId]);
+    $isTemp = $stmt->fetchColumn();
+    
+    if ($isTemp) {
+        try {
+            $pdo->beginTransaction();
+            
+            // Remove from show_users
+            $pdo->prepare("DELETE FROM show_users WHERE user_id = ?")->execute([$tempId]);
+            
+            // Remove photos
+            $pdo->prepare("DELETE FROM show_user_photos WHERE user_id = ?")->execute([$tempId]);
+            
+            // Remove from other tables
+            $pdo->prepare("DELETE FROM assets WHERE owner_id = ?")->execute([$tempId]);
+            $pdo->prepare("DELETE FROM casting WHERE user_id = ?")->execute([$tempId]);
+            $pdo->prepare("DELETE FROM rehearsal_attendees WHERE user_id = ?")->execute([$tempId]);
+            
+            // Delete the user
+            $pdo->prepare("DELETE FROM users WHERE id = ? AND is_temporary = 1")->execute([$tempId]);
+            
+            $pdo->commit();
+            $success = 'Temporary user deleted completely.';
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $error = 'Delete failed: ' . $e->getMessage();
+        }
+    } else {
+        $error = 'Cannot delete: User is not temporary.';
+    }
+}
+
+
 
 // Fetch all show members
 $stmt = $pdo->prepare("
-    SELECT u.id, u.username, u.email, su.role, su.banned, sup.photo_url
+    SELECT u.id, u.username, u.email, su.role, su.banned, su.is_temporary, sup.photo_url
     FROM show_users su
     JOIN users u ON su.user_id = u.id
     LEFT JOIN show_user_photos sup ON sup.show_id = su.show_id AND sup.user_id = su.user_id
@@ -292,6 +333,19 @@ $realUsers = $pdo->query("SELECT id, username, email FROM users WHERE is_tempora
               <!-- Actions -->
               <td class="px-4 py-2 text-center space-x-2 align-top">
                 <?php if (!$member['banned']): ?>
+                  <?php if ($member['is_temporary']): ?>
+                  <button type="button"
+                          class="bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 rounded text-sm"
+                          onclick="openMergePopup(<?= $member['id'] ?>, '<?= htmlspecialchars($member['username'], ENT_QUOTES) ?>')">
+                    Merge
+                  </button>
+                  <form method="POST" style="display:inline;">
+                    <input type="hidden" name="temp_user_id" value="<?= $member['id'] ?>">
+                    <button type="submit" name="delete_temp_user" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded text-sm" onclick="return confirm('Delete this temporary user permanently? This cannot be undone.');">
+                        Delete
+                    </button>
+                  </form>
+                <?php else: ?>
                   <form method="POST" class="inline">
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
                     <button type="submit" name="remove_member" class="bg-yellow-500 hover:bg-yellow-400 text-white px-2 py-1 rounded text-sm">Remove</button>
@@ -299,17 +353,6 @@ $realUsers = $pdo->query("SELECT id, username, email FROM users WHERE is_tempora
                   <form method="POST" class="inline">
                     <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
                     <button type="submit" name="ban_member" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded text-sm">Ban</button>
-                  </form>
-                  <?php if ($member['is_temporary']): ?>
-                  <button type="button"
-                          class="bg-orange-600 hover:bg-orange-500 text-white px-2 py-1 rounded text-sm"
-                          onclick="openMergePopup(<?= $member['id'] ?>, '<?= htmlspecialchars($member['username'], ENT_QUOTES) ?>')">
-                    Merge
-                  </button>
-                <?php else: ?>
-                  <form method="POST" class="inline">
-                    <input type="hidden" name="member_id" value="<?= $member['id'] ?>">
-                    <button type="submit" name="remove_member" class="bg-yellow-500 hover:bg-yellow-400 text-white px-2 py-1 rounded text-sm">Remove</button>
                   </form>
                 <?php endif; ?>
 

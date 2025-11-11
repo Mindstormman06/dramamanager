@@ -19,18 +19,6 @@ return array (
 EOL
 echo "Written db_config.php from environment variables"
 
-# Always overwrite Discord bot .env
-DISCORD_ENV_FILE=/var/www/html/bot/discord-rehearsal-bot/.env
-cat > "$DISCORD_ENV_FILE" <<EOL
-DISCORD_TOKEN=${DISCORD_TOKEN}
-GUILD_ID=${GUILD_ID}
-SCHEDULE_CHANNEL_ID=${SCHEDULE_CHANNEL_ID}
-SCHEDULE_PINGS=${SCHEDULE_PINGS}
-CHANGELOG_PINGS=${CHANGELOG_PINGS}
-CHANGELOG_CHANNEL_ID=${CHANGELOG_CHANNEL_ID}
-EOL
-echo "Written Discord .env from environment variables"
-
 # Ensure log and upload directories are writable
 chown -R www-data:www-data /var/www/html/uploads /var/www/html/logs
 chmod -R 775 /var/www/html/uploads /var/www/html/logs
@@ -79,6 +67,5 @@ if (!\$exists) {
 }
 "
 
-# Start Apache and PM2 bot
-pm2 start /var/www/html/bot/discord-rehearsal-bot/bot.js --no-daemon &
+# Start Apache
 exec apache2-foreground

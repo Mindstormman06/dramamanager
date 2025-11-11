@@ -3,9 +3,8 @@ FROM php:8.2-apache
 
 # Install required extensions and tools
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip git python3 python3-pip nodejs npm default-mysql-client dos2unix \
+    libzip-dev unzip git python3 python3-pip default-mysql-client dos2unix \
     && docker-php-ext-install pdo pdo_mysql zip \
-    && npm install -g pm2 \
     && pip3 install --break-system-packages --no-cache-dir pymupdf
 
 RUN echo "output_buffering = 4096" > /usr/local/etc/php/conf.d/output-buffering.ini
@@ -30,18 +29,10 @@ COPY . /var/www/html/
 RUN find /var/www/html -type f -name "*.php" -exec dos2unix {} \;
 
 
-
-# Install Node dependencies for Discord bot
-WORKDIR /var/www/html/bot/discord-rehearsal-bot
-RUN npm install
-
 # Copy entrypoint
 COPY docker-entrypoint.sh /var/www/html/docker-entrypoint.sh
 RUN chmod +x /var/www/html/docker-entrypoint.sh
 
-# Set Permissions
-# RUN mkdir -p /var/www/html/backend/config
-# RUN chmod -R 777 /var/www/html
 
 # Expose port 8079
 EXPOSE 8079
