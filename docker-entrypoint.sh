@@ -19,6 +19,25 @@ return array (
 EOL
 echo "Written db_config.php from environment variables"
 
+# Create .env file from environment variables if it doesn't exist
+ENV_FILE=/var/www/html/backend/.env
+if [ ! -f "$ENV_FILE" ]; then
+    cat > "$ENV_FILE" <<EOL
+SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+SMTP_PORT=${SMTP_PORT:-587}
+SMTP_USERNAME=${SMTP_USERNAME}
+SMTP_PASSWORD=${SMTP_PASSWORD}
+SMTP_FROM=${SMTP_FROM}
+SMTP_FROM_NAME=${SMTP_FROM_NAME:-Theatre Manager}
+EOL
+    echo "Created .env file from environment variables"
+else
+    echo ".env file already exists, skipping creation"
+fi
+
+chown www-data:www-data "$ENV_FILE"
+chmod 600 "$ENV_FILE"
+
 # Ensure log and upload directories are writable
 chown -R www-data:www-data /var/www/html/uploads /var/www/html/logs
 chmod -R 775 /var/www/html/uploads /var/www/html/logs
