@@ -2,23 +2,31 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../vendor/autoload.php'; // adjust path if PHPMailer is in vendor
+require_once __DIR__ . '/../vendor/autoload.php';
 
 function send_email($to, $subject, $body, $altBody = '') {
     $mail = new PHPMailer(true);
 
     try {
+        // Load .env file
+        $envFile = __DIR__ . '/../.env';
+        if (!file_exists($envFile)) {
+            throw new Exception('.env file not found');
+        }
+        
+        $env = parse_ini_file($envFile);
+        
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
+        $mail->Host       = $env['SMTP_HOST'] ?? 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'theatre.manager.site@gmail.com';
-        $mail->Password   = 'kmue fvjy kqkg niju'; // 🔒 Replace with Gmail App Password
+        $mail->Username   = $env['SMTP_USERNAME'] ?? '';
+        $mail->Password   = $env['SMTP_PASSWORD'] ?? '';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = (int)($env['SMTP_PORT'] ?? 587);
 
         // From/To
-        $mail->setFrom('theatre.manager.site@gmail.com', 'Theatre Manager');
+        $mail->setFrom($env['SMTP_FROM'] ?? 'noreply@example.com', $env['SMTP_FROM_NAME'] ?? 'Theatre Manager');
         $mail->addAddress($to);
 
         // Content
