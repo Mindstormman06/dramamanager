@@ -6,3 +6,4 @@ docker-compose.yml
 logs/site.log
 backend/config/*
 backend/.env
+docker-compose-local.yml
